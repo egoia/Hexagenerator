@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b8969ec3b56fe744bd652e20d7541bb, type: 3}
+  m_Name: River_D
+  m_EditorClassIdentifier: Assembly-CSharp::HexagoneTile
+  prefab: {fileID: 6475051565737245207, guid: 215d26d9a271dc1438b7a28a8e7a7fa2, type: 3}
+  sequence: 010000000400000001000000040000000100000004000000
