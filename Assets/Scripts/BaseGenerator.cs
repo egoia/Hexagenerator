@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BaseGenerator : MonoBehaviour
@@ -19,12 +18,6 @@ public class BaseGenerator : MonoBehaviour
         {
             Generate();
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     [ContextMenu("GenerateBase")]
