@@ -39,7 +39,7 @@ public class BaseGenerator : MonoBehaviour
                 {
                     xPos += HAUTEUR;
                 }
-                grid[x, y] = Instantiate(placeHolder, new Vector3(xPos, 0, yPos), Quaternion.identity, transform);
+                grid[x, y] = Instantiate(placeHolder, new Vector3(xPos, 0, yPos), placeHolder.transform.rotation, transform);
             }
         }
     }

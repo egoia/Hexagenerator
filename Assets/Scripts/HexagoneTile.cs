@@ -10,7 +10,7 @@ public enum Terrain
 [CreateAssetMenu(menuName = "Procedural Generation/HexagoneTile")]
 public class HexagoneTile : ScriptableObject
 {
-    
+    public static List<Terrain> TERRAINS = new List<Terrain> { Terrain.WATER, Terrain.GRASS, Terrain.COAST_WL, Terrain.COAST_WR, Terrain.RIVER, Terrain.ROAD };
     public GameObject prefab;
     public Terrain[] sequence = new Terrain[6];
 

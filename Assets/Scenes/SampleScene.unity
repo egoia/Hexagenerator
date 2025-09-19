@@ -394,7 +394,7 @@ GameObject:
   - component: {fileID: 503733043}
   - component: {fileID: 503733042}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GridLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -412,7 +412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08ed3bf212b75e448aa213de7224fac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseGenerator
-  placeHolder: {fileID: 5431619118229990843, guid: 8d826dc56ce2c04468a90660c8bf3d3e, type: 3}
+  placeHolder: {fileID: 5663943293655066619, guid: 759d3fc8b7c089d48b10b230a2a1702d, type: 3}
   size: {x: 56, y: 56}
 --- !u!4 &503733043
 Transform:
