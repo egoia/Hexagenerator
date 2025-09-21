@@ -10,11 +10,27 @@ public enum Terrain
 [CreateAssetMenu(menuName = "Procedural Generation/HexagoneTile")]
 public class HexagoneTile : ScriptableObject
 {
-    public static List<Terrain> TERRAINS = new List<Terrain> { Terrain.WATER, Terrain.GRASS, Terrain.COAST_WL, Terrain.COAST_WR, Terrain.RIVER, Terrain.ROAD };
     public GameObject prefab;
     public Terrain[] sequence = new Terrain[6];
+    public float occurenceValue;
+    [Range(0, 5)] public int rotation = 0;
+    public List<HexagoneTile> northWest;
+    public List<HexagoneTile> northEast;
+    public List<HexagoneTile> east;
+    public List<HexagoneTile> southEast;
+    public List<HexagoneTile> southWest;
+    public List<HexagoneTile> west;
 
-    void OnValidate(){
-        if(sequence.Length != 6) Array.Resize(ref sequence, 6);
+    
+
+    void OnValidate()
+    {
+        if (sequence.Length != 6) Array.Resize(ref sequence, 6);
     }
+
+    public GameObject Spawn(Vector3 pos, Transform transform)
+    {
+        return Instantiate(prefab, pos, Quaternion.Euler(0, 0, rotation * 60), transform);
+    }
+    
 }
