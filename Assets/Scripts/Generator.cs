@@ -24,6 +24,8 @@ public class Generator : MonoBehaviour
     public int seed;
 
     public SetupTiles setup;
+    public BaseGenerator basegen;
+
     [Range(0, 100)] public float waterProbability;
     [Range(0,100)]public float grassProbability;
     [Range(0,100)]public float roadProbability;
@@ -33,7 +35,7 @@ public class Generator : MonoBehaviour
 
     void Start()
     {
-        Init();
+        Generate();
     }
 
     void Init()
@@ -51,7 +53,7 @@ public class Generator : MonoBehaviour
             }
         }
         ChangeOccurenceValues();
-        Generate();
+        InitBase();
     }
 
     void Solve()
@@ -60,6 +62,7 @@ public class Generator : MonoBehaviour
         gridBeforeSolving = (HexagoneTile[,])grid.Clone();
     }
 
+    [ContextMenu("Generate")]
     void Generate()
     {
         GenerateNewSeed();
@@ -80,8 +83,17 @@ public class Generator : MonoBehaviour
         }
 
         //2) go to that tile and do
-        Collapse(new Vector2Int(rx,ry), new HashSet<Vector2Int>(), todo);
-        
+        Collapse(new Vector2Int(rx, ry), new HashSet<Vector2Int>(), todo);
+
+        for (int i = 0; i < grid_width; i++)
+        {
+            for (int j = 0; j < grid_height; j++)
+            {
+                Debug.Assert(gridPossibilities[i, j].Count == 1, "WFC has failed");
+                grid[i, j] = gridPossibilities[i, j][0];
+            }
+        }
+        basegen.Show(grid);
     }
 
     void ChangeOccurenceValues()
@@ -89,17 +101,27 @@ public class Generator : MonoBehaviour
         setup.SetupOccurenceValue(grassProbability, waterProbability, roadProbability, coastProbability, riverProbability, strangeProbability);
     }
 
+    void InitBase()
+    {
+        basegen.size = new Vector2Int(grid_width, grid_height);
+    }
+
     void Propagate(Vector2Int target, HashSet<Vector2Int> updated, HashSet<Vector2Int> collapsed)
     {
         Vector2Int[] neighbours = GetNeighbours(target);
 
         //merge all possibilities
-        HashSet<HexagoneTile>[] adjacencyPossibilities = new HashSet<HexagoneTile>[6];
+        HashSet<HexagoneTile>[] adjacencyPossibilities = new HashSet<HexagoneTile>[6]{  new HashSet<HexagoneTile>(),
+                                                                                        new HashSet<HexagoneTile>(),
+                                                                                        new HashSet<HexagoneTile>(),
+                                                                                        new HashSet<HexagoneTile>(),
+                                                                                        new HashSet<HexagoneTile>(),
+                                                                                        new HashSet<HexagoneTile>(), };
         if (!updated.Contains(neighbours[0]) && !collapsed.Contains(neighbours[0]))
         {
             foreach (var possibility in gridPossibilities[target.x, target.y])
             {
-                adjacencyPossibilities[0].AddRange(possibility.northWest);
+                adjacencyPossibilities[0].UnionWith(possibility.northWest);
             }
         }
 
@@ -107,7 +129,7 @@ public class Generator : MonoBehaviour
         {
             foreach (var possibility in gridPossibilities[target.x, target.y])
             {
-                adjacencyPossibilities[1].AddRange(possibility.northEast);
+                adjacencyPossibilities[1].UnionWith(possibility.northEast);
             }
         }
 
@@ -115,7 +137,7 @@ public class Generator : MonoBehaviour
         {
             foreach (var possibility in gridPossibilities[target.x, target.y])
             {
-                adjacencyPossibilities[2].AddRange(possibility.west);
+                adjacencyPossibilities[2].UnionWith(possibility.west);
             }
         }
 
@@ -123,7 +145,7 @@ public class Generator : MonoBehaviour
         {
             foreach (var possibility in gridPossibilities[target.x, target.y])
             {
-                adjacencyPossibilities[3].AddRange(possibility.east);
+                adjacencyPossibilities[3].UnionWith(possibility.east);
             }
         }
 
@@ -131,7 +153,7 @@ public class Generator : MonoBehaviour
         {
             foreach (var possibility in gridPossibilities[target.x, target.y])
             {
-                adjacencyPossibilities[4].AddRange(possibility.southEast);
+                adjacencyPossibilities[4].UnionWith(possibility.southEast);
             }
         }
 
@@ -139,7 +161,7 @@ public class Generator : MonoBehaviour
         {
             foreach (var possibility in gridPossibilities[target.x, target.y])
             {
-                adjacencyPossibilities[5].AddRange(possibility.southWest);
+                adjacencyPossibilities[5].UnionWith(possibility.southWest);
             }
         }
 
@@ -147,7 +169,7 @@ public class Generator : MonoBehaviour
         List<Vector2Int> nextToPropagate = new List<Vector2Int>();
         for (int i = 0; i < 6; i++)
         {
-            if (!updated.Contains(neighbours[i]) && !collapsed.Contains(neighbours[i]) && !(neighbours[i].x > grid_width || neighbours[i].y > grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
+            if (!updated.Contains(neighbours[i]) && !collapsed.Contains(neighbours[i]) && !(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
             {
                 bool asChanged = false;
                 List<HexagoneTile> updatedPossibilities = new List<HexagoneTile>(gridPossibilities[neighbours[i].x, neighbours[i].y]);
@@ -166,6 +188,8 @@ public class Generator : MonoBehaviour
             }
         }
 
+        Debug.Log(nextToPropagate);
+
         foreach (var next in nextToPropagate)
         {
             Propagate(next, updated, collapsed);
@@ -179,7 +203,9 @@ public class Generator : MonoBehaviour
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
         collapsed.Add(target);
         todo.Remove(target);
+        Debug.Log("before propagate");
         Propagate(target, new HashSet<Vector2Int>{target}, collapsed);
+        Debug.Log("after propagate");
 
         if (todo.Count == 0) return;
         float min = float.PositiveInfinity;
