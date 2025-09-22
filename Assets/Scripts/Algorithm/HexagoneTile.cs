@@ -30,6 +30,7 @@ public class HexagoneTile : ScriptableObject
 
     public GameObject Spawn(Vector3 pos, Transform transform)
     {
+        prefab.GetComponent<HexaContainer>().scriptable = this;
         return Instantiate(prefab, pos, Quaternion.Euler(0, rotation * 60, 0), transform);
     }
     

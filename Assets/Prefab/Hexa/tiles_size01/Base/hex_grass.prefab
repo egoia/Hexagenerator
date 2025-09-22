@@ -50,10 +50,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b16469b573d97584da4d235649a2e433, type: 3}
       propertyPath: m_Name
-      value: hex_grass (2)
+      value: hex_grass
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b16469b573d97584da4d235649a2e433, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8854074431984014302}
   m_SourcePrefab: {fileID: 100100000, guid: b16469b573d97584da4d235649a2e433, type: 3}
+--- !u!1 &4345087879866825076 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b16469b573d97584da4d235649a2e433, type: 3}
+  m_PrefabInstance: {fileID: 3498650080496059429}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-8854074431984014302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345087879866825076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d86a05953b2f3134bbe53bc388198ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HexaContainer
+  scriptable: {fileID: 0}
