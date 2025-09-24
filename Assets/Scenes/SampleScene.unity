@@ -475,10 +475,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 11b6dfc0f38893c4a8b8a665e98c940f, type: 2}
   - {fileID: 11400000, guid: c3e42461db1b17c4c83656c7d55797ec, type: 2}
   - {fileID: 11400000, guid: 71a54622297b2c44ca4e18408a29ebc7, type: 2}
-  - {fileID: 11400000, guid: 7dd156f2685135f4491cf749552bdf99, type: 2}
-  - {fileID: 11400000, guid: fb4f9531db50cd94899318ebac11462a, type: 2}
-  - {fileID: 11400000, guid: d4734391af9f6cf409175372b5fa1ec7, type: 2}
-  - {fileID: 11400000, guid: 4f581a780b34bf64dacff19f7acd4ca7, type: 2}
   - {fileID: 11400000, guid: f8d6b438a74ea044fa13e686446a7f5b, type: 2}
   - {fileID: 11400000, guid: 2e675dcbec76c5c489a1a14310a937cc, type: 2}
   - {fileID: 11400000, guid: ec0791bf08a053b48b650ce79cd9c90d, type: 2}
@@ -634,6 +630,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0e468bcd2db832448a58c93f7f485496, type: 2}
   - {fileID: 11400000, guid: 97fce25c71fdfba48be2f0d4411f2c72, type: 2}
   - {fileID: 11400000, guid: b0d74392c1afe774596d9ee731e0a76d, type: 2}
+  - {fileID: 11400000, guid: 7dd156f2685135f4491cf749552bdf99, type: 2}
+  - {fileID: 11400000, guid: fb4f9531db50cd94899318ebac11462a, type: 2}
+  - {fileID: 11400000, guid: d4734391af9f6cf409175372b5fa1ec7, type: 2}
+  - {fileID: 11400000, guid: 4f581a780b34bf64dacff19f7acd4ca7, type: 2}
   dirPath: Assets/Scriptable Objects/HexTiles/Rotated
   grass:
   - {fileID: 11400000, guid: 7dd156f2685135f4491cf749552bdf99, type: 2}
@@ -653,6 +653,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2ef52215252a9ba40bd481946735f98a, type: 2}
   - {fileID: 11400000, guid: aab83ec874f307f4e8ab0ad196277f49, type: 2}
   strangeRoads:
+  - {fileID: 11400000, guid: 3e07c4882692a8940b73d5abf5a9e9a6, type: 2}
+  - {fileID: 11400000, guid: 0cdcdd5bc06d98a45895bee50f1f1831, type: 2}
+  - {fileID: 11400000, guid: 913575eb603c3f649859ac6fbc953397, type: 2}
+  - {fileID: 11400000, guid: b0ae22d4c1d0a664691cdb4c5cb30af2, type: 2}
+  - {fileID: 11400000, guid: 4acc574e7248a244e81401597f51ca64, type: 2}
+  - {fileID: 11400000, guid: 0f9145cf471a5f54b8812f7e4f86f8f6, type: 2}
+  - {fileID: 11400000, guid: 49c02eba119f48f41ba6dd58092281af, type: 2}
+  - {fileID: 11400000, guid: 11b6dfc0f38893c4a8b8a665e98c940f, type: 2}
+  - {fileID: 11400000, guid: c3e42461db1b17c4c83656c7d55797ec, type: 2}
+  - {fileID: 11400000, guid: 4f581a780b34bf64dacff19f7acd4ca7, type: 2}
+  - {fileID: 11400000, guid: 71a54622297b2c44ca4e18408a29ebc7, type: 2}
   - {fileID: 11400000, guid: 3f6a3162b9675e245b5844da5a635011, type: 2}
   - {fileID: 11400000, guid: e091d39e7cec9374cb1df456d0845c2d, type: 2}
   - {fileID: 11400000, guid: 28faffbc9a7061541b4877a3195b8ab2, type: 2}
@@ -703,17 +714,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0e468bcd2db832448a58c93f7f485496, type: 2}
   - {fileID: 11400000, guid: 97fce25c71fdfba48be2f0d4411f2c72, type: 2}
   - {fileID: 11400000, guid: b0d74392c1afe774596d9ee731e0a76d, type: 2}
-  - {fileID: 11400000, guid: 3e07c4882692a8940b73d5abf5a9e9a6, type: 2}
-  - {fileID: 11400000, guid: 0cdcdd5bc06d98a45895bee50f1f1831, type: 2}
-  - {fileID: 11400000, guid: 913575eb603c3f649859ac6fbc953397, type: 2}
-  - {fileID: 11400000, guid: b0ae22d4c1d0a664691cdb4c5cb30af2, type: 2}
-  - {fileID: 11400000, guid: 4acc574e7248a244e81401597f51ca64, type: 2}
-  - {fileID: 11400000, guid: 0f9145cf471a5f54b8812f7e4f86f8f6, type: 2}
-  - {fileID: 11400000, guid: 49c02eba119f48f41ba6dd58092281af, type: 2}
-  - {fileID: 11400000, guid: 11b6dfc0f38893c4a8b8a665e98c940f, type: 2}
-  - {fileID: 11400000, guid: c3e42461db1b17c4c83656c7d55797ec, type: 2}
-  - {fileID: 11400000, guid: 4f581a780b34bf64dacff19f7acd4ca7, type: 2}
-  - {fileID: 11400000, guid: 71a54622297b2c44ca4e18408a29ebc7, type: 2}
   normalRivers:
   - {fileID: 11400000, guid: e54bd9934ab426f489274806899fc6ed, type: 2}
   - {fileID: 11400000, guid: 2c8899d3a12b4b441a2fc91c4fb7970e, type: 2}
