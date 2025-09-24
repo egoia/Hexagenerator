@@ -84,7 +84,7 @@ public class SetupTiles : MonoBehaviour
             rot.rotation = i;
             for (int j = 0; j < 6; j++)
             {
-                rot.sequence[j] = tile.sequence[(i + j) % 6];
+                rot.sequence[j] = tile.sequence[(6-i + j) % 6];
             }
             rotatedPossibilities.Add(rot);
         }

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[InitializeOnLoad]
+//[InitializeOnLoad]
 public class AutoSelectScriptableObject
 {
     static AutoSelectScriptableObject()
