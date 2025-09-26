@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Coast_C_4
   m_EditorClassIdentifier: Assembly-CSharp::HexagoneTile
   prefab: {fileID: 4188679872065807847, guid: f5dbe6e8ac978f84ca4b997adb37beee, type: 3}
-  sequence: 000000000300000001000000020000000000000000000000
-  occurenceValue: 4
+  sequence: 030000000100000002000000000000000000000000000000
+  occurenceValue: 0.6666667
   rotation: 4
   northWest:
   - {fileID: 11400000, guid: ec0791bf08a053b48b650ce79cd9c90d, type: 2}
@@ -140,7 +140,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c9e699238f05fb140954829c08d3b832, type: 2}
   - {fileID: 11400000, guid: fb4f9531db50cd94899318ebac11462a, type: 2}
   west:
-  - {fileID: 11400000, guid: 99d254c3b5e3d4f43bb0922fae6b6b97, type: 2}
   - {fileID: 11400000, guid: 2e675dcbec76c5c489a1a14310a937cc, type: 2}
   - {fileID: 11400000, guid: ab417c9cf682efa449b8af02f9347d44, type: 2}
   - {fileID: 11400000, guid: ae8cdbc41557cdf499580304fbc5f5e6, type: 2}

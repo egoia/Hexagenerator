@@ -844,9 +844,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc78cac84aa0eab49bbda3bd51dd7c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Generator
-  grid_width: 10
-  grid_height: 10
-  seed: 1723720787
+  grid_width: 5
+  grid_height: 5
+  seed: 1717219746
   setup: {fileID: 503733044}
   basegen: {fileID: 503733042}
   waterProbability: 20

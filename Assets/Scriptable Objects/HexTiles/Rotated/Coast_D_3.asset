@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexagoneTile
   prefab: {fileID: 5675894482510428446, guid: 9ada2cb3e1a48694a9c9028d1d83ec6c, type: 3}
   sequence: 020000000000000000000000000000000000000003000000
-  occurenceValue: 4
+  occurenceValue: 0.6666667
   rotation: 3
   northWest:
   - {fileID: 11400000, guid: 07e1d834e7ec48f4b9da94684cb4f7df, type: 2}
@@ -35,6 +35,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0fe1ba0692e7f7f43b6b7bc1c49b1d78, type: 2}
   - {fileID: 11400000, guid: fb4f9531db50cd94899318ebac11462a, type: 2}
   east:
+  - {fileID: 11400000, guid: 99d254c3b5e3d4f43bb0922fae6b6b97, type: 2}
   - {fileID: 11400000, guid: 07e1d834e7ec48f4b9da94684cb4f7df, type: 2}
   - {fileID: 11400000, guid: fed05127e24795040a3ef0ceaa2d4673, type: 2}
   - {fileID: 11400000, guid: 4be8bb652646e824cbcbbeea4395bda2, type: 2}
@@ -72,6 +73,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fb4f9531db50cd94899318ebac11462a, type: 2}
   west:
   - {fileID: 11400000, guid: 3f91e1e8acc7b4b4db846211bef5e076, type: 2}
+  - {fileID: 11400000, guid: 99d254c3b5e3d4f43bb0922fae6b6b97, type: 2}
   - {fileID: 11400000, guid: 07e1d834e7ec48f4b9da94684cb4f7df, type: 2}
   - {fileID: 11400000, guid: f8d6b438a74ea044fa13e686446a7f5b, type: 2}
   - {fileID: 11400000, guid: 0b4f2980eeaefd34795114029bcce5c0, type: 2}

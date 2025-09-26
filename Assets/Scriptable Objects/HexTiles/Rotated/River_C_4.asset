@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexagoneTile
   prefab: {fileID: 2781351449296020949, guid: 05ea120079d30dd42be85c8f96da7d54, type: 3}
   sequence: 040000000400000001000000010000000100000001000000
-  occurenceValue: 0
+  occurenceValue: 0.05970149
   rotation: 4
   northWest:
   - {fileID: 11400000, guid: 9ca511b7f7cb0d2478cabc45976dd843, type: 2}

@@ -106,8 +106,9 @@ public class Generator : MonoBehaviour
         basegen.size = new Vector2Int(grid_width, grid_height);
     }
 
-    void Propagate(Vector2Int target, HashSet<Vector2Int> updated, HashSet<Vector2Int> collapsed)
+    void Propagate(Vector2Int target)
     {
+        Debug.Log(target);
         Vector2Int[] neighbours = GetNeighbours(target);
 
         //merge all possibilities
@@ -117,59 +118,27 @@ public class Generator : MonoBehaviour
                                                                                         new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(), };
-        if (!updated.Contains(neighbours[0]) && !collapsed.Contains(neighbours[0]))
+                                                                                        
+        foreach (var possibility in gridPossibilities[target.x, target.y])
         {
-            foreach (var possibility in gridPossibilities[target.x, target.y])
-            {
-                adjacencyPossibilities[0].UnionWith(possibility.northWest);
-            }
-        }
+            adjacencyPossibilities[0].UnionWith(possibility.northWest);
 
-        if (!updated.Contains(neighbours[1]) && !collapsed.Contains(neighbours[1]))
-        {
-            foreach (var possibility in gridPossibilities[target.x, target.y])
-            {
-                adjacencyPossibilities[1].UnionWith(possibility.northEast);
-            }
-        }
+            adjacencyPossibilities[1].UnionWith(possibility.northEast);
 
-        if (!updated.Contains(neighbours[2]) && !collapsed.Contains(neighbours[2]))
-        {
-            foreach (var possibility in gridPossibilities[target.x, target.y])
-            {
-                adjacencyPossibilities[2].UnionWith(possibility.west);
-            }
-        }
+            adjacencyPossibilities[2].UnionWith(possibility.west);
 
-        if (!updated.Contains(neighbours[3]) && !collapsed.Contains(neighbours[3]))
-        {
-            foreach (var possibility in gridPossibilities[target.x, target.y])
-            {
-                adjacencyPossibilities[3].UnionWith(possibility.east);
-            }
-        }
+            adjacencyPossibilities[3].UnionWith(possibility.east);
 
-        if (!updated.Contains(neighbours[4]) && !collapsed.Contains(neighbours[4]))
-        {
-            foreach (var possibility in gridPossibilities[target.x, target.y])
-            {
-                adjacencyPossibilities[4].UnionWith(possibility.southEast);
-            }
-        }
+            adjacencyPossibilities[4].UnionWith(possibility.southWest);
 
-        if (!updated.Contains(neighbours[5]) && !collapsed.Contains(neighbours[5]))
-        {
-            foreach (var possibility in gridPossibilities[target.x, target.y])
-            {
-                adjacencyPossibilities[5].UnionWith(possibility.southWest);
-            }
+            adjacencyPossibilities[5].UnionWith(possibility.southEast);
         }
 
         //update
         List<Vector2Int> nextToPropagate = new List<Vector2Int>();
         for (int i = 0; i < 6; i++)
         {
-            if (!updated.Contains(neighbours[i]) && !collapsed.Contains(neighbours[i]) && !(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
+            if ( !(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
             {
                 bool asChanged = false;
                 List<HexagoneTile> updatedPossibilities = new List<HexagoneTile>(gridPossibilities[neighbours[i].x, neighbours[i].y]);
@@ -184,15 +153,12 @@ public class Generator : MonoBehaviour
                 gridPossibilities[neighbours[i].x, neighbours[i].y] = updatedPossibilities;
 
                 if(asChanged)nextToPropagate.Add(neighbours[i]); // only propagate if the possibilities have changed
-                updated.Add(neighbours[i]);
             }
         }
 
-        Debug.Log(nextToPropagate);
-
         foreach (var next in nextToPropagate)
         {
-            Propagate(next, updated, collapsed);
+            Propagate(next);
         }
     }
 
@@ -203,9 +169,7 @@ public class Generator : MonoBehaviour
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
         collapsed.Add(target);
         todo.Remove(target);
-        Debug.Log("before propagate");
-        Propagate(target, new HashSet<Vector2Int>{target}, collapsed);
-        Debug.Log("after propagate");
+        Propagate(target);
 
         if (todo.Count == 0) return;
         float min = float.PositiveInfinity;
@@ -254,17 +218,17 @@ public class Generator : MonoBehaviour
     {
         int y = v.y;
         int x = v.x;
-        if (y % 2 == 0)
+        if (y % 2 != 0)
         {
-            return new Vector2Int[] {  new Vector2Int(x, y - 1), new Vector2Int(x + 1, y - 1),
+            return new Vector2Int[] {  new Vector2Int(x, y + 1), new Vector2Int(x + 1, y + 1),
                                     new Vector2Int(x - 1, y), new Vector2Int(x + 1, y),
-                                    new Vector2Int(x, y + 1), new Vector2Int(x + 1, y + 1) };
+                                    new Vector2Int(x, y - 1), new Vector2Int(x + 1, y - 1) };
         }
         else
         {
-            return new Vector2Int[] {  new Vector2Int(x - 1, y - 1), new Vector2Int(x, y - 1),
+            return new Vector2Int[] {  new Vector2Int(x - 1, y + 1), new Vector2Int(x, y + 1),
                                     new Vector2Int(x - 1, y), new Vector2Int(x + 1, y),
-                                    new Vector2Int(x - 1, y + 1), new Vector2Int(x, y + 1) };
+                                    new Vector2Int(x - 1, y - 1), new Vector2Int(x, y - 1) };
         }
 
     }

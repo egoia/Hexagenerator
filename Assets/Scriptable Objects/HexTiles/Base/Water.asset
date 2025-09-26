@@ -41,6 +41,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0fe1ba0692e7f7f43b6b7bc1c49b1d78, type: 2}
   - {fileID: 11400000}
   east:
+  - {fileID: 11400000, guid: 99d254c3b5e3d4f43bb0922fae6b6b97, type: 2}
   - {fileID: 11400000, guid: 07e1d834e7ec48f4b9da94684cb4f7df, type: 2}
   - {fileID: 11400000, guid: fed05127e24795040a3ef0ceaa2d4673, type: 2}
   - {fileID: 11400000, guid: 4be8bb652646e824cbcbbeea4395bda2, type: 2}
@@ -77,7 +78,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c9e699238f05fb140954829c08d3b832, type: 2}
   - {fileID: 11400000}
   west:
-  - {fileID: 11400000, guid: 99d254c3b5e3d4f43bb0922fae6b6b97, type: 2}
   - {fileID: 11400000, guid: 2e675dcbec76c5c489a1a14310a937cc, type: 2}
   - {fileID: 11400000, guid: ab417c9cf682efa449b8af02f9347d44, type: 2}
   - {fileID: 11400000, guid: ae8cdbc41557cdf499580304fbc5f5e6, type: 2}
