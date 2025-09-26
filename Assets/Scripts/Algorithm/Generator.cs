@@ -118,7 +118,8 @@ public class Generator : MonoBehaviour
                                                                                         new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(), };
-                                                                                        
+
+        //RAJOUTER NE PAS MAJ LES COLLAPSED                                                                                     
         foreach (var possibility in gridPossibilities[target.x, target.y])
         {
             adjacencyPossibilities[0].UnionWith(possibility.northWest);
