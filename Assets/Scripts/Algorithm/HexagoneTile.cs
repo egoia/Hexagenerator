@@ -21,7 +21,15 @@ public class HexagoneTile : ScriptableObject
     public List<HexagoneTile> southWest;
     public List<HexagoneTile> west;
 
-    
+    public static Terrain getCompatible(Terrain t)
+    {
+        switch (t)
+        {
+            case Terrain.COAST_WL: return Terrain.COAST_WR;
+            case Terrain.COAST_WR: return Terrain.COAST_WL;
+            default : return t;
+        }
+    }
 
     void OnValidate()
     {

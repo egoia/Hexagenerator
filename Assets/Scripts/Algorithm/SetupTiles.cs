@@ -93,6 +93,7 @@ public class SetupTiles : MonoBehaviour
     
     void MakeTerrainPossibilityLists(List<HexagoneTile> allTiles)
     {
+       
         foreach (var terrain in TERRAINS)
         {
             List<HexagoneTile> northWest = new List<HexagoneTile>();
@@ -102,48 +103,67 @@ public class SetupTiles : MonoBehaviour
             List<HexagoneTile> west = new List<HexagoneTile>();
             List<HexagoneTile> east = new List<HexagoneTile>();
 
+
             foreach (var tile in allTiles)
             {
                 if (tile.sequence[3] == terrain)
                 {
                     northWest.Add(tile);
+                }
+                if (tile.sequence[3] == HexagoneTile.getCompatible(terrain))
+                {
                     tile.southEast = southEast;
                 }
 
                 if (tile.sequence[4] == terrain)
                 {
                     northEast.Add(tile);
+                }
+                if (tile.sequence[4] == HexagoneTile.getCompatible(terrain))
+                {
                     tile.southWest = southWest;
                 }
 
                 if (tile.sequence[5] == terrain)
                 {
                     east.Add(tile);
+                }
+                if (tile.sequence[5] == HexagoneTile.getCompatible(terrain))
+                {
                     tile.west = west;
                 }
 
                 if (tile.sequence[0] == terrain)
                 {
                     southEast.Add(tile);
+                }
+                if (tile.sequence[0] == HexagoneTile.getCompatible(terrain))
+                {
                     tile.northWest = northWest;
                 }
 
                 if (tile.sequence[1] == terrain)
                 {
                     southWest.Add(tile);
+                }
+                if (tile.sequence[1] == HexagoneTile.getCompatible(terrain))
+                {
                     tile.northEast = northEast;
                 }
 
                 if (tile.sequence[2] == terrain)
                 {
                     west.Add(tile);
+                }
+                if (tile.sequence[2] == HexagoneTile.getCompatible(terrain))
+                {
                     tile.east = east;
                 }
-                
-                 #if UNITY_EDITOR
-                EditorUtility.SetDirty(tile);   
+
+#if UNITY_EDITOR
+                EditorUtility.SetDirty(tile);
                 AssetDatabase.SaveAssets();
-                #endif
+#endif
             }
         }
     }
