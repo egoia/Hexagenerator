@@ -56,6 +56,32 @@ public class Generator : MonoBehaviour
         InitBase();
     }
 
+    HashSet<Vector2Int> InitWater()
+    {
+        HashSet<Vector2Int> collapsed = new HashSet<Vector2Int>();
+        HexagoneTile water = setup.water[0];
+        for (int i = 0; i < grid_width; i++)
+        {
+            Vector2Int bottom = new Vector2Int(i, 0);
+            Vector2Int top = new Vector2Int(i, grid_height - 1);
+            Collapse(bottom, water);
+            collapsed.Add(bottom);
+            Collapse(top, water);
+            collapsed.Add(top);
+        }
+
+        for (int i = 0; i < grid_height; i++)
+        {
+            Vector2Int left = new Vector2Int(0, i);
+            Vector2Int right = new Vector2Int(grid_height - 1, i);
+            Collapse(left, water);
+            collapsed.Add(left);
+            Collapse(right, water);
+            collapsed.Add(right);
+        }
+        return collapsed;
+    }
+
     void Solve()
     {
         InitSeed();
@@ -68,10 +94,12 @@ public class Generator : MonoBehaviour
         GenerateNewSeed();
         InitSeed();
         Init();
+        
+        HashSet<Vector2Int> collapsed = InitWater();
 
         //1) pick random number
-        int rx = UnityEngine.Random.Range(0, grid_width);
-        int ry = UnityEngine.Random.Range(0, grid_height);
+        int rx = UnityEngine.Random.Range(1, grid_width-1);// 1 et -1 pour l'eau
+        int ry = UnityEngine.Random.Range(1, grid_height-1);//1 et -1 pour l'eau
 
         List<Vector2Int> todo = new List<Vector2Int>();
         for (int i = 0; i < grid_width; i++)
@@ -83,7 +111,7 @@ public class Generator : MonoBehaviour
         }
 
         //2) go to that tile and do
-        Collapse(new Vector2Int(rx, ry), new HashSet<Vector2Int>(), todo);
+        Collapse(new Vector2Int(rx, ry), collapsed, todo);
 
         for (int i = 0; i < grid_width; i++)
         {
@@ -184,6 +212,14 @@ public class Generator : MonoBehaviour
             }
         }
         Collapse(realNext, collapsed, todo);
+    }
+
+    void Collapse(Vector2Int target, HexagoneTile tileToSet)
+    {
+        HexagoneTile pick = tileToSet;
+        if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
+        gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
+        Propagate(target);
     }
 
     HexagoneTile RandomPick(List<HexagoneTile> possibilities)

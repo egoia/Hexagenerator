@@ -26,8 +26,8 @@ public class HexagoneTile : ScriptableObject
         switch (t)
         {
             case Terrain.COAST_WL: return Terrain.COAST_WR;
-            case Terrain.COAST_WR: return Terrain.COAST_WL;
-            default : return t;
+            case Terrain.COAST_WR: return Terrain.COAST_WL ;
+            default: return  t ;
         }
     }
 

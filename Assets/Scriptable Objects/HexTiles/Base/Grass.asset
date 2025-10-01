@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 4345087879866825076, guid: 0a83becde412d2044b7c8b7b691119d1, type: 3}
   sequence: 010000000100000001000000010000000100000001000000
-  occurenceValue: 20
+  occurenceValue: 30
   rotation: 0
   northWest:
   - {fileID: 11400000, guid: f338f1487e24e9b49b61fc1d272adb1f, type: 2}

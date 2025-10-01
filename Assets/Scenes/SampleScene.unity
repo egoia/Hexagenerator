@@ -415,7 +415,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseGenerator
   placeHolder: {fileID: 5663943293655066619, guid: 759d3fc8b7c089d48b10b230a2a1702d, type: 3}
-  size: {x: 5, y: 5}
+  size: {x: 7, y: 7}
 --- !u!4 &503733043
 Transform:
   m_ObjectHideFlags: 0
@@ -844,15 +844,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc78cac84aa0eab49bbda3bd51dd7c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Generator
-  grid_width: 10
-  grid_height: 10
-  seed: 1723720787
+  grid_width: 12
+  grid_height: 12
+  seed: 1588228332
   setup: {fileID: 503733044}
   basegen: {fileID: 503733042}
-  waterProbability: 20
-  grassProbability: 20
+  waterProbability: 5
+  grassProbability: 30
   roadProbability: 20
-  coastProbability: 20
+  coastProbability: 25
   riverProbability: 20
   strangeProbability: 20
 --- !u!1 &832575517
