@@ -846,12 +846,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Generator
   grid_width: 12
   grid_height: 12
-  seed: 1588228332
+  seed: 1390531036
   setup: {fileID: 503733044}
   basegen: {fileID: 503733042}
-  waterProbability: 5
-  grassProbability: 30
-  roadProbability: 20
+  waterProbability: 2
+  grassProbability: 32
+  roadProbability: 25
   coastProbability: 25
   riverProbability: 20
   strangeProbability: 20
