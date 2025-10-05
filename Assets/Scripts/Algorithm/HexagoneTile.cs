@@ -4,7 +4,7 @@ using System;
 
 public enum Terrain
 {
-    WATER, GRASS, COAST_WL, COAST_WR, RIVER, ROAD, ANYTHING
+    WATER, GRASS, COAST_WL, COAST_WR, RIVER, ROAD, ANYTHING, FOREST
 }
 
 [CreateAssetMenu(menuName = "Procedural Generation/HexagoneTile")]

@@ -31,6 +31,7 @@ public class Generator : MonoBehaviour
     [Range(0,100)]public float roadProbability;
     [Range(0,100)]public float coastProbability;
     [Range(0,100)]public float riverProbability;
+    [Range(0, 100)] public float forestProbability;
     [Range(0, 100)] public float strangeProbability;
 
     void Start()
@@ -126,7 +127,7 @@ public class Generator : MonoBehaviour
 
     void ChangeOccurenceValues()
     {
-        setup.SetupOccurenceValue(grassProbability, waterProbability, roadProbability, coastProbability, riverProbability, strangeProbability);
+        setup.SetupOccurenceValue(grassProbability, waterProbability, roadProbability, coastProbability, riverProbability, forestProbability, strangeProbability);
     }
 
     void InitBase()

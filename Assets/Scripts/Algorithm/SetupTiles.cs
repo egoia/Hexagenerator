@@ -9,6 +9,7 @@ public class SetupTiles : MonoBehaviour
     public string dirPath;
     public List<HexagoneTile> grass;
     public List<HexagoneTile> water;
+    public List<HexagoneTile> forest;
     public List<HexagoneTile> normalRoads;
     public List<HexagoneTile> strangeRoads;
     public List<HexagoneTile> normalRivers;
@@ -35,7 +36,7 @@ public class SetupTiles : MonoBehaviour
         MakeTerrainPossibilityLists(allHexagoneTiles);
     }
 
-    public void SetupOccurenceValue(float grass, float water, float road, float coast, float river, float strange)
+    public void SetupOccurenceValue(float grass, float water, float road, float coast, float river, float forest, float strange)
     {
         foreach (var tile in this.grass)
         {
@@ -50,6 +51,11 @@ public class SetupTiles : MonoBehaviour
         foreach (var tile in this.coast)
         {
             tile.occurenceValue = coast / this.coast.Count;
+        }
+
+        foreach (var tile in this.forest)
+        {
+            tile.occurenceValue = forest / this.forest.Count;
         }
 
         foreach (var tile in this.normalRivers)
