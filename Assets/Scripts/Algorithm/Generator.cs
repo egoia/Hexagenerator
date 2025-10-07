@@ -22,7 +22,6 @@ public class Generator : MonoBehaviour
     public int grid_width = 2;
     public int grid_height = 2;
     public int seed;
-
     public SetupTiles setup;
     public BaseGenerator basegen;
 
