@@ -57,9 +57,9 @@ public class Generator : MonoBehaviour
         InitBase();
     }
 
-    HashSet<Vector2Int> InitWater()
+    List<Vector2Int> InitWater()
     {
-        HashSet<Vector2Int> collapsed = new HashSet<Vector2Int>();
+        List<Vector2Int> collapsed = new List<Vector2Int>();
         HexagoneTile water = setup.water[0];
         for (int i = 0; i < grid_width; i++)
         {
@@ -96,7 +96,7 @@ public class Generator : MonoBehaviour
         InitSeed();
         Init();
         
-        HashSet<Vector2Int> collapsed = InitWater();
+        List<Vector2Int> collapsed = InitWater();
 
         //1) pick random number
         int rx = UnityEngine.Random.Range(1, grid_width-1);// 1 et -1 pour l'eau
@@ -122,7 +122,7 @@ public class Generator : MonoBehaviour
                 grid[i, j] = gridPossibilities[i, j][0];
             }
         }
-        basegen.Show(grid);
+        basegen.Show(grid, collapsed);
     }
 
     void ChangeOccurenceValues()
@@ -192,7 +192,7 @@ public class Generator : MonoBehaviour
         }
     }
 
-    void Collapse(Vector2Int target, HashSet<Vector2Int> collapsed, List<Vector2Int> todo)
+    void Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
     {
         HexagoneTile pick = RandomPick(gridPossibilities[target.x, target.y]);
         if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
