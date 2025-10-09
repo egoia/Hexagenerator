@@ -66,7 +66,6 @@ public class BaseGenerator : MonoBehaviour
             int r = UnityEngine.Random.Range(0, positions.Count);
             int x = positions[r].x;
             int y = positions[r].y;
-            positions.Remove(positions[r]);
 
             float xPos = x * xOffset;
             float yPos = y * yOffset; // Z en realité
@@ -74,7 +73,9 @@ public class BaseGenerator : MonoBehaviour
             {
                 xPos += HAUTEUR;
             }
-            grid[x, y] = generatedGrid[x, y].Spawn(new Vector3(xPos, 0, yPos), transform);
+            StartCoroutine(SpawnTileCoroutine(generatedGrid[x, y], new Vector3(x, 0, y), positions[r]));
+            
+            positions.Remove(positions[r]);
         }
 
         /*for (int x = 0; x < grid.GetLength(0); x++)
@@ -104,10 +105,11 @@ public class BaseGenerator : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnTileCoroutine(HexagoneTile tile, Vector3 position)
+    IEnumerator SpawnTileCoroutine(HexagoneTile tile, Vector3 position, Vector2Int gridPos)
     {
         Vector3 startPosition = position + new Vector3(0, animationHeight, 0);
         GameObject tileObj = tile.Spawn(startPosition, transform);
+        grid[gridPos.x, gridPos.y] = tileObj;
         float t = 0;
         float timer = Time.time;
         while (t <= 1)
