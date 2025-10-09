@@ -77,8 +77,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee0c64fb5552290409b8b8403ec96c0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  heightScale: {x: 65, y: 95}
-  widthScale: {x: 70, y: 90}
+  heightScale: {x: 55, y: 95}
+  widthScale: {x: 60, y: 100}
   personnalityRange: 10
   rotationRange: 5
   maxPositionOffset: 0.05

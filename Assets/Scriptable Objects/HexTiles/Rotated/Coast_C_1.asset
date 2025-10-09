@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexagoneTile
   prefab: {fileID: 4188679872065807847, guid: f5dbe6e8ac978f84ca4b997adb37beee, type: 3}
   sequence: 000000000000000000000000030000000100000002000000
-  occurenceValue: 0.8333333
+  occurenceValue: 0.5
   rotation: 1
   northWest:
   - {fileID: 11400000, guid: fb4f9531db50cd94899318ebac11462a, type: 2}
@@ -100,17 +100,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8d5300db2634b8d42a16caa58d66a974, type: 2}
   - {fileID: 11400000, guid: 41517ff30d8dc3343a27e1379bb356d1, type: 2}
   - {fileID: 11400000, guid: 6df67165397301840a7b28c070472861, type: 2}
-  - {fileID: 11400000, guid: b0e8d83ef54154b4b913d8f97ec9447a, type: 2}
-  - {fileID: 11400000, guid: 343ad2e949500804eab91b46d08e0bce, type: 2}
-  - {fileID: 11400000, guid: 2d11fa476e4bb5e48b7a5e331096a5dd, type: 2}
-  - {fileID: 11400000, guid: e85c06bc7d129af4b9a521f1c0a2e868, type: 2}
-  - {fileID: 11400000, guid: a9d857f17fc957f499b5014015dbe6ee, type: 2}
-  - {fileID: 11400000, guid: 92a83c8feaa4298449c0a7c21fdc5ee6, type: 2}
-  - {fileID: 11400000, guid: b8222bbe2160df245af2597911fc0e02, type: 2}
-  - {fileID: 11400000, guid: a133e5ff7ffc3bc40973eaccca850802, type: 2}
-  - {fileID: 11400000, guid: d08a51a5f955b0e4cb1ffef85c80e001, type: 2}
-  - {fileID: 11400000, guid: 0da1118fe995fed4a871ee84fd50f0c7, type: 2}
-  - {fileID: 11400000, guid: ffe6e2027440e234f89dbc93e56a9c59, type: 2}
   - {fileID: 11400000, guid: 5a45b24f9de5748459ee60c04c7d2044, type: 2}
   - {fileID: 11400000, guid: cb07d2a7435208440940de8b1ee17a79, type: 2}
   - {fileID: 11400000, guid: 9acd94314d74d5c45a7e8185fc6ce72c, type: 2}

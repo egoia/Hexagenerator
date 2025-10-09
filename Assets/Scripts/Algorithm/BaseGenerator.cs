@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,8 +10,13 @@ public class BaseGenerator : MonoBehaviour
     public GameObject[,] grid;
     private const float SIDE_SIZE = 1.1547f;
     private float HAUTEUR;
-    private const double ANGLE_EQUILATERAL = Math.PI/3;
+    private const double ANGLE_EQUILATERAL = Math.PI / 3;
     public Vector2Int size;
+
+    [Header("Animation")]
+    public float animationHeight;
+    public AnimationCurve curve;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -96,5 +102,27 @@ public class BaseGenerator : MonoBehaviour
                 grid[x, y] = null;
             }
         }
+    }
+
+    IEnumerator SpawnTileCoroutine(HexagoneTile tile, Vector3 position)
+    {
+        Vector3 startPosition = position + new Vector3(0, animationHeight, 0);
+        GameObject tileObj = tile.Spawn(startPosition, transform);
+        float t = 0;
+        float timer = Time.time;
+        while (t <= 1)
+        {
+
+            float interpolationValue = curve.Evaluate(t);
+
+            float interpolationHeight = Mathf.Lerp(animationHeight, position.y, interpolationValue);
+
+            tileObj.transform.position = position + new Vector3(0, interpolationHeight, 0);
+            t += Time.time - timer;
+            timer = Time.time;
+
+        }
+        tileObj.transform.position = position;
+        yield return null;
     }
 }
