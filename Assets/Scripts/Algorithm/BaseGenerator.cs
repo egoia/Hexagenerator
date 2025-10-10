@@ -11,11 +11,13 @@ public class BaseGenerator : MonoBehaviour
     private const float SIDE_SIZE = 1.1547f;
     private float HAUTEUR;
     private const double ANGLE_EQUILATERAL = Math.PI / 3;
-    public Vector2Int size;
+    [HideInInspector] public Vector2Int size;
 
     [Header("Animation")]
     public float animationHeight;
     public AnimationCurve curve;
+    [Min(1)] public float animationTime = 1;
+    public float spawnInterval = 0.1f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,8 +53,9 @@ public class BaseGenerator : MonoBehaviour
         }
     }
 
-    public void Show(HexagoneTile[,] generatedGrid, List<Vector2Int> positions)
+    public IEnumerator ShowCoroutine(HexagoneTile[,] generatedGrid, List<Vector2Int> positions)
     {
+        
         HAUTEUR = SIDE_SIZE * (float)Math.Sin(ANGLE_EQUILATERAL);
         if (grid != null) Clean();
         grid = new GameObject[size.x, size.y];
@@ -63,6 +66,8 @@ public class BaseGenerator : MonoBehaviour
         int iterations = positions.Count;
         for (int i = 0; i < iterations; i++)
         {
+
+
             int r = UnityEngine.Random.Range(0, positions.Count);
             int x = positions[r].x;
             int y = positions[r].y;
@@ -72,10 +77,14 @@ public class BaseGenerator : MonoBehaviour
             if (y % 2 != 0)
             {
                 xPos += HAUTEUR;
+
             }
-            StartCoroutine(SpawnTileCoroutine(generatedGrid[x, y], new Vector3(x, 0, y), positions[r]));
-            
+            StartCoroutine(SpawnTileCoroutine(generatedGrid[x, y], new Vector3(xPos, 0, yPos), positions[r]));
+            //grid[x, y] = generatedGrid[x, y].Spawn(new Vector3(xPos, 0, yPos), transform);
+
             positions.Remove(positions[r]);
+
+            yield return new WaitForSeconds(spawnInterval);
         }
 
         /*for (int x = 0; x < grid.GetLength(0); x++)
@@ -91,14 +100,17 @@ public class BaseGenerator : MonoBehaviour
                 grid[x, y] = generatedGrid[x, y].Spawn(new Vector3(xPos, 0, yPos), transform);
             }
         }*/
+        yield return null;
     }
 
     void Clean()
     {
+        Debug.Log(grid.GetLength(0) + " , " + grid.GetLength(1));
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int y = 0; y < grid.GetLength(1); y++)
             {
+                Debug.Log($"x : {x}, y : {y}");
                 Destroy(grid[x, y]);
                 grid[x, y] = null;
             }
@@ -112,17 +124,16 @@ public class BaseGenerator : MonoBehaviour
         grid[gridPos.x, gridPos.y] = tileObj;
         float t = 0;
         float timer = Time.time;
-        while (t <= 1)
+        while (t <= animationTime)
         {
-
-            float interpolationValue = curve.Evaluate(t);
+            float interpolationValue = curve.Evaluate(t/animationTime);
 
             float interpolationHeight = Mathf.Lerp(animationHeight, position.y, interpolationValue);
 
             tileObj.transform.position = position + new Vector3(0, interpolationHeight, 0);
             t += Time.time - timer;
             timer = Time.time;
-
+            yield return null;
         }
         tileObj.transform.position = position;
         yield return null;

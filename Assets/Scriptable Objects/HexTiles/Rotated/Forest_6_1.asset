@@ -55,7 +55,7 @@ MonoBehaviour:
   east:
   - {fileID: 11400000, guid: d2cfb2e79c9a30043aa4f688fecb0c70, type: 2}
   - {fileID: 11400000, guid: b1d4aabfc3494e24e85f2510a75ad9e2, type: 2}
-  - {fileID: 11400000, guid: 18deea8d9e87f274f94d5d524aa695a5, type: 2}
+  - {fileID: 11400000, guid: 74093fd7ae3997442b101fb2c806ac22, type: 2}
   - {fileID: 11400000, guid: e44f2bd727449ba48ac3841b00a60ed1, type: 2}
   - {fileID: 11400000, guid: 2f6251c2546675643b433a52f7c368e3, type: 2}
   - {fileID: 11400000, guid: 8d6454be704695a41a025dd6852eb653, type: 2}

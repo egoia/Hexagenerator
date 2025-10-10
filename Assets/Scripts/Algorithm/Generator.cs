@@ -35,6 +35,7 @@ public class Generator : MonoBehaviour
 
     void Start()
     {
+        basegen.size = new Vector2Int(grid_width, grid_height);
         Generate();
     }
 
@@ -60,6 +61,7 @@ public class Generator : MonoBehaviour
     {
         List<Vector2Int> collapsed = new List<Vector2Int>();
         HexagoneTile water = setup.water[0];
+
         for (int i = 0; i < grid_width; i++)
         {
             Vector2Int bottom = new Vector2Int(i, 0);
@@ -70,10 +72,10 @@ public class Generator : MonoBehaviour
             collapsed.Add(top);
         }
 
-        for (int i = 0; i < grid_height; i++)
+        for (int i = 1; i < grid_height-1; i++)
         {
             Vector2Int left = new Vector2Int(0, i);
-            Vector2Int right = new Vector2Int(grid_height - 1, i);
+            Vector2Int right = new Vector2Int(grid_width - 1, i);
             Collapse(left, water);
             collapsed.Add(left);
             Collapse(right, water);
@@ -102,9 +104,9 @@ public class Generator : MonoBehaviour
         int ry = UnityEngine.Random.Range(1, grid_height-1);//1 et -1 pour l'eau
 
         List<Vector2Int> todo = new List<Vector2Int>();
-        for (int i = 0; i < grid_width; i++)
+        for (int i = 1; i < grid_width-1; i++)
         {
-            for (int j = 0; j < grid_height; j++)
+            for (int j = 1; j < grid_height-1; j++)
             {
                 todo.Add(new Vector2Int(i, j));
             }
@@ -121,7 +123,7 @@ public class Generator : MonoBehaviour
                 grid[i, j] = gridPossibilities[i, j][0];
             }
         }
-        basegen.Show(grid, collapsed);
+        basegen.StartCoroutine(basegen.ShowCoroutine(grid, collapsed));
     }
 
     void ChangeOccurenceValues()
@@ -136,7 +138,6 @@ public class Generator : MonoBehaviour
 
     void Propagate(Vector2Int target)
     {
-        Debug.Log(target);
         Vector2Int[] neighbours = GetNeighbours(target);
 
         //merge all possibilities

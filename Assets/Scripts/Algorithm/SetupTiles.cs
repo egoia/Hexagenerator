@@ -30,6 +30,7 @@ public class SetupTiles : MonoBehaviour
             }
         }
     }
+    
     [ContextMenu("Setup Adjacency lists")]
     public void SetUpAdjacencyLists()
     {
