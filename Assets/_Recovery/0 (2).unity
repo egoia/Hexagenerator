@@ -205,8 +205,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.29325494, y: -0.3831401, z: 0.12964335, w: -0.86625504}
-  m_LocalPosition: {x: -6.9772606, y: 13.162486, z: -4.433532}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -416,7 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BaseGenerator
   placeHolder: {fileID: 5663943293655066619, guid: 759d3fc8b7c089d48b10b230a2a1702d, type: 3}
   size: {x: 12, y: 12}
-  animationHeight: 1
+  animationHeight: 5
   curve:
     serializedVersion: 2
     m_Curve:
@@ -438,33 +438,6 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  animationTime: 0.2
-  maxSpawnInterval: 0.008
-  minSpawnInterval: 0.0005
-  decreaseFunction:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 3.265309
-      outSlope: 3.265309
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.029166639
-      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -565,7 +538,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d0b99ea4270c9c84da577f0c9506050b, type: 2}
   - {fileID: 11400000, guid: 07003a266c830cf48893d4163ff718de, type: 2}
   - {fileID: 11400000, guid: 26c8e3ae86a8fc74f885a24e3c14eaa2, type: 2}
-  - {fileID: 11400000, guid: 74093fd7ae3997442b101fb2c806ac22, type: 2}
+  - {fileID: 11400000, guid: 18deea8d9e87f274f94d5d524aa695a5, type: 2}
   - {fileID: 11400000, guid: 6a528eb21e2ef954d83b3986591a8bd7, type: 2}
   - {fileID: 11400000, guid: dd57d1563f14ad241919a3765df19013, type: 2}
   - {fileID: 11400000, guid: 5352e21b43675f443ab6c64a850efad9, type: 2}
@@ -598,7 +571,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9acd94314d74d5c45a7e8185fc6ce72c, type: 2}
   - {fileID: 11400000, guid: 84fb5eec688deec408182c85538e91e2, type: 2}
   - {fileID: 11400000, guid: 061adb0e62f093b408cdd2f798404c24, type: 2}
-  - {fileID: 11400000, guid: d0159c465313a6a44a387c44ab9124d5, type: 2}
+  - {fileID: 11400000, guid: 65f36a8e47b7fe3409e3de362ddd856f, type: 2}
   - {fileID: 11400000, guid: 20f4208c1c08eda4d8370a79ae54de88, type: 2}
   - {fileID: 11400000, guid: cbaab20f28b305e44b8ae762cbd2e476, type: 2}
   - {fileID: 11400000, guid: 8d28dfb71df71a34d8bc4863adb110d5, type: 2}
@@ -651,7 +624,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 42e692698256a0e48891013782f563ae, type: 2}
   - {fileID: 11400000, guid: 3b45d6c9aedac0e41b044b5adb5c97d3, type: 2}
   - {fileID: 11400000, guid: a97348b142a95b640ad1671bf7708d21, type: 2}
-  - {fileID: 11400000, guid: f17e0e7a55cc29e4db49824e874b87cc, type: 2}
+  - {fileID: 11400000, guid: 7641e6053fb5489459b5286d503396fb, type: 2}
   - {fileID: 11400000, guid: 8e2d04c6cc325034b942d124f60f9376, type: 2}
   - {fileID: 11400000, guid: 8ff43fb5acee44e4295547854c99fbe3, type: 2}
   - {fileID: 11400000, guid: 6ba79f32fdd3bb843953fc3d0dc64e52, type: 2}
@@ -867,7 +840,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9acd94314d74d5c45a7e8185fc6ce72c, type: 2}
   - {fileID: 11400000, guid: 84fb5eec688deec408182c85538e91e2, type: 2}
   - {fileID: 11400000, guid: 061adb0e62f093b408cdd2f798404c24, type: 2}
-  - {fileID: 11400000, guid: d0159c465313a6a44a387c44ab9124d5, type: 2}
+  - {fileID: 11400000, guid: 65f36a8e47b7fe3409e3de362ddd856f, type: 2}
   - {fileID: 11400000, guid: 20f4208c1c08eda4d8370a79ae54de88, type: 2}
   - {fileID: 11400000, guid: cbaab20f28b305e44b8ae762cbd2e476, type: 2}
   - {fileID: 11400000, guid: 8d28dfb71df71a34d8bc4863adb110d5, type: 2}
@@ -989,7 +962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Generator
   grid_width: 12
   grid_height: 12
-  seed: 1176803604
+  seed: 192604773
   setup: {fileID: 503733044}
   basegen: {fileID: 503733042}
   waterProbability: 2
