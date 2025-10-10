@@ -416,7 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BaseGenerator
   placeHolder: {fileID: 5663943293655066619, guid: 759d3fc8b7c089d48b10b230a2a1702d, type: 3}
   size: {x: 12, y: 12}
-  animationHeight: 2
+  animationHeight: 1
   curve:
     serializedVersion: 2
     m_Curve:
@@ -441,8 +441,33 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  animationTime: 2
-  spawnInterval: 0.05
+  animationTime: 0.2
+  maxSpawnInterval: 0.008
+  minSpawnInterval: 0.0005
+  decreaseFunction:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.265309
+      outSlope: 3.265309
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.029166639
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &503733043
 Transform:
   m_ObjectHideFlags: 0
@@ -964,7 +989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Generator
   grid_width: 12
   grid_height: 12
-  seed: 192604773
+  seed: 1176803604
   setup: {fileID: 503733044}
   basegen: {fileID: 503733042}
   waterProbability: 2

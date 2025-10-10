@@ -16,8 +16,12 @@ public class BaseGenerator : MonoBehaviour
     [Header("Animation")]
     public float animationHeight;
     public AnimationCurve curve;
-    [Min(1)] public float animationTime = 1;
-    public float spawnInterval = 0.1f;
+    public float animationTime = 1;
+
+    [Header("Spawn interval")]
+    public float maxSpawnInterval = 0.1f;
+    public float minSpawnInterval = 0.01f;
+    public AnimationCurve decreaseFunction;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -55,7 +59,7 @@ public class BaseGenerator : MonoBehaviour
 
     public IEnumerator ShowCoroutine(HexagoneTile[,] generatedGrid, List<Vector2Int> positions)
     {
-        
+        float currentSpawnInterval = maxSpawnInterval;
         HAUTEUR = SIDE_SIZE * (float)Math.Sin(ANGLE_EQUILATERAL);
         if (grid != null) Clean();
         grid = new GameObject[size.x, size.y];
@@ -84,7 +88,11 @@ public class BaseGenerator : MonoBehaviour
 
             positions.Remove(positions[r]);
 
-            yield return new WaitForSeconds(spawnInterval);
+            yield return new WaitForSeconds(currentSpawnInterval);
+
+            float interpolationDecreaseValue = positions.Count / (float)iterations;
+
+            currentSpawnInterval = Mathf.Max(maxSpawnInterval * decreaseFunction.Evaluate(interpolationDecreaseValue), minSpawnInterval);
         }
 
         /*for (int x = 0; x < grid.GetLength(0); x++)
