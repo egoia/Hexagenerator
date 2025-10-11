@@ -167,11 +167,15 @@ public class SetupTiles : MonoBehaviour
                     tile.east = east;
                 }
 
-#if UNITY_EDITOR
+            }
+
+            #if UNITY_EDITOR
+            foreach (var tile in allHexagoneTiles)
+            {
                 EditorUtility.SetDirty(tile);
                 AssetDatabase.SaveAssets();
-#endif
             }
+            #endif
         }
     }
 }

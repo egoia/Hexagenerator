@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -91,24 +92,29 @@ public class Generator : MonoBehaviour
     }
 
     [ContextMenu("Generate")]
-    void Generate()
+    public void Generate()
+    {
+        StartCoroutine(GenerateCoroutine());
+    }
+    
+    IEnumerator GenerateCoroutine()
     {
         GenerateNewSeed();
         Debug.Log("Time Log 1 : " + Time.timeSinceLevelLoad);
         InitSeed();
-        
+
         Debug.Log("Time Log 2 : " + Time.timeSinceLevelLoad);
         Init();
-        
+
         Debug.Log("Time Log 3 : " + Time.timeSinceLevelLoad);
 
         List<Vector2Int> collapsed = InitWater();
-        
+
         Debug.Log("Time Log 4 : " + Time.timeSinceLevelLoad);
 
         //1) pick random number
-        int rx = UnityEngine.Random.Range(1, grid_width-1);// 1 et -1 pour l'eau
-        int ry = UnityEngine.Random.Range(1, grid_height-1);//1 et -1 pour l'eau
+        int rx = UnityEngine.Random.Range(1, grid_width - 1);// 1 et -1 pour l'eau
+        int ry = UnityEngine.Random.Range(1, grid_height - 1);//1 et -1 pour l'eau
 
         List<Vector2Int> todo = new List<Vector2Int>();
         for (int i = 1; i < grid_width - 1; i++)
@@ -118,12 +124,12 @@ public class Generator : MonoBehaviour
                 todo.Add(new Vector2Int(i, j));
             }
         }
-        
+
         Debug.Log("Time Log 5 : " + Time.timeSinceLevelLoad);
 
         //2) go to that tile and do
         Collapse(new Vector2Int(rx, ry), collapsed, todo);
-        
+
         Debug.Log("Time Log 6 : " + Time.timeSinceLevelLoad);
 
         for (int i = 0; i < grid_width; i++)
@@ -134,9 +140,10 @@ public class Generator : MonoBehaviour
                 grid[i, j] = gridPossibilities[i, j][0];
             }
         }
-        
+
         Debug.Log("Time Log 7 : " + Time.timeSinceLevelLoad);
-        basegen.StartCoroutine(basegen.ShowCoroutine(grid, collapsed));
+        yield return basegen.StartCoroutine(basegen.ShowCoroutine(grid, collapsed));
+
     }
 
     void ChangeOccurenceValues()
