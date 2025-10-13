@@ -166,7 +166,6 @@ public class Generator : MonoBehaviour
 
     IEnumerator Propagate(Vector2Int target)
     {
-        Debug.Log($"TimeLog : {Time.time}");
         Vector2Int[] neighbours = GetNeighbours(target);
 
         //merge all possibilities

@@ -59,7 +59,6 @@ public class BaseGenerator : MonoBehaviour
 
     public IEnumerator ShowCoroutine(HexagoneTile[,] generatedGrid, List<Vector2Int> positions)
     {
-        Debug.Log("lala");
         float currentSpawnInterval = maxSpawnInterval;
         HAUTEUR = SIDE_SIZE * (float)Math.Sin(ANGLE_EQUILATERAL);
         if (grid != null) Clean();
@@ -70,7 +69,6 @@ public class BaseGenerator : MonoBehaviour
 
         int iterations = positions.Count;
         
-        Debug.Log("lala");
         for (int i = 0; i < iterations; i++)
         {
 
@@ -87,7 +85,6 @@ public class BaseGenerator : MonoBehaviour
 
             }
             
-            Debug.Log("lala");
             StartCoroutine(SpawnTileCoroutine(generatedGrid[x, y], new Vector3(xPos, 0, yPos), positions[r]));
             //grid[x, y] = generatedGrid[x, y].Spawn(new Vector3(xPos, 0, yPos), transform);
 
