@@ -60,16 +60,15 @@ public class Generator : MonoBehaviour
 
     IEnumerator InitWater(List<Vector2Int> collapsed)
     {
-        collapsed = new List<Vector2Int>();
         HexagoneTile water = setup.water[0];
 
         for (int i = 0; i < grid_width; i++)
         {
             Vector2Int bottom = new Vector2Int(i, 0);
             Vector2Int top = new Vector2Int(i, grid_height - 1);
-            Collapse(bottom, water);
+            yield return Collapse(bottom, water);
             collapsed.Add(bottom);
-            Collapse(top, water);
+            yield return Collapse(top, water);
             collapsed.Add(top);
             if (i % 10 == 0)
             {
@@ -81,9 +80,9 @@ public class Generator : MonoBehaviour
         {
             Vector2Int left = new Vector2Int(0, i);
             Vector2Int right = new Vector2Int(grid_width - 1, i);
-            Collapse(left, water);
+            yield return Collapse(left, water);
             collapsed.Add(left);
-            Collapse(right, water);
+            yield return Collapse(right, water);
             collapsed.Add(right);
             if (i % 10 == 0)
             {
@@ -116,7 +115,7 @@ public class Generator : MonoBehaviour
         Debug.Log("Time Log 3 : " + Time.timeSinceLevelLoad);
 
         List<Vector2Int> collapsed = new List<Vector2Int>();
-        yield return StartCoroutine(InitWater(collapsed));
+        yield return InitWater(collapsed);
 
         Debug.Log("Time Log 4 : " + Time.timeSinceLevelLoad);
 
@@ -137,7 +136,7 @@ public class Generator : MonoBehaviour
         Debug.Log("Time Log 5 : " + Time.timeSinceLevelLoad);
 
         //2) go to that tile and do
-        yield return StartCoroutine(Collapse(new Vector2Int(rx, ry), collapsed, todo));
+        yield return Collapse(new Vector2Int(rx, ry), collapsed, todo);
 
         Debug.Log("Time Log 6 : " + Time.timeSinceLevelLoad);
 
@@ -151,7 +150,7 @@ public class Generator : MonoBehaviour
         }
 
         Debug.Log("Time Log 7 : " + Time.timeSinceLevelLoad);
-        yield return basegen.StartCoroutine(basegen.ShowCoroutine(grid, collapsed));
+        yield return basegen.ShowCoroutine(grid, collapsed);
 
     }
 
@@ -167,6 +166,7 @@ public class Generator : MonoBehaviour
 
     IEnumerator Propagate(Vector2Int target)
     {
+        Debug.Log($"TimeLog : {Time.time}");
         Vector2Int[] neighbours = GetNeighbours(target);
 
         //merge all possibilities
@@ -192,13 +192,12 @@ public class Generator : MonoBehaviour
 
             adjacencyPossibilities[5].UnionWith(possibility.southEast);
         }
-        yield return null;
 
         //update
         List<Vector2Int> nextToPropagate = new List<Vector2Int>();
         for (int i = 0; i < 6; i++)
         {
-            if ( !(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
+            if (!(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
             {
                 bool asChanged = false;
                 List<HexagoneTile> updatedPossibilities = new List<HexagoneTile>(gridPossibilities[neighbours[i].x, neighbours[i].y]);
@@ -208,31 +207,29 @@ public class Generator : MonoBehaviour
                     {
                         updatedPossibilities.Remove(neighbourPossibility);
                         asChanged = true;
-                    } 
+                    }
                 }
                 gridPossibilities[neighbours[i].x, neighbours[i].y] = updatedPossibilities;
 
                 if (asChanged) nextToPropagate.Add(neighbours[i]); // only propagate if the possibilities have changed
-                yield return null;
             }
         }
-
+        
         foreach (var next in nextToPropagate)
         {
-            yield return StartCoroutine(Propagate(next));
+            yield return Propagate(next);
         }
     }
 
-    void Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
+    IEnumerator Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
     {
         HexagoneTile pick = RandomPick(gridPossibilities[target.x, target.y]);
         if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
         collapsed.Add(target);
         todo.Remove(target);
-        Propagate(target);
-
-        if (todo.Count == 0) return;
+        yield return Propagate(target);
+        if (todo.Count == 0) yield break;
         float min = float.PositiveInfinity;
         Vector2Int realNext = new Vector2Int();
         foreach (var next in todo)
@@ -243,7 +240,7 @@ public class Generator : MonoBehaviour
                 realNext = next;
             }
         }
-        Collapse(realNext, collapsed, todo);
+        yield return Collapse(realNext, collapsed, todo);
     }
 
     IEnumerator Collapse(Vector2Int target, HexagoneTile tileToSet)
@@ -251,7 +248,7 @@ public class Generator : MonoBehaviour
         HexagoneTile pick = tileToSet;
         if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
-        yield return StartCoroutine(Propagate(target));
+        yield return Propagate(target);
     }
 
     HexagoneTile RandomPick(List<HexagoneTile> possibilities)

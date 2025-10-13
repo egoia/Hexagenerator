@@ -1209,6 +1209,7 @@ MonoBehaviour:
   seed: 1176803604
   setup: {fileID: 503733044}
   basegen: {fileID: 503733042}
+  pauseRate: 60
   waterProbability: 2
   grassProbability: 0
   roadProbability: 25
