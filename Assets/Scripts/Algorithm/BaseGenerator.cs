@@ -122,7 +122,6 @@ public class BaseGenerator : MonoBehaviour
         {
             for (int y = 0; y < grid.GetLength(1); y++)
             {
-                Debug.Log($"x : {x}, y : {y}");
                 Destroy(grid[x, y]);
                 grid[x, y] = null;
             }
