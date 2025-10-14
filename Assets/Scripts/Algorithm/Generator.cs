@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -200,6 +201,7 @@ public class Generator : MonoBehaviour
             {
                 bool asChanged = false;
                 List<HexagoneTile> updatedPossibilities = new List<HexagoneTile>(gridPossibilities[neighbours[i].x, neighbours[i].y]);
+                
                 foreach (var neighbourPossibility in gridPossibilities[neighbours[i].x, neighbours[i].y])
                 {
                     if (!adjacencyPossibilities[i].Contains(neighbourPossibility))
@@ -231,6 +233,7 @@ public class Generator : MonoBehaviour
         if (todo.Count == 0) yield break;
         float min = float.PositiveInfinity;
         Vector2Int realNext = new Vector2Int();
+
         foreach (var next in todo)
         {
             if (gridPossibilities[next.x, next.y].Count < min)
