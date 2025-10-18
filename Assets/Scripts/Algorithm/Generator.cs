@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class Generator : MonoBehaviour
 {
@@ -34,6 +37,10 @@ public class Generator : MonoBehaviour
     [Range(0,100)]public float riverProbability;
     [Range(0, 100)] public float forestProbability;
     [Range(0, 100)] public float strangeProbability;
+
+    private float timeInPropagate;
+    private float timeInPropagatePart1 = 0;
+    private float timeInPropagatePart2 = 0;
 
     void Start()
     {
@@ -149,7 +156,9 @@ public class Generator : MonoBehaviour
                 grid[i, j] = gridPossibilities[i, j][0];
             }
         }
-
+        Debug.Log("time in propagate : " + timeInPropagate);
+        Debug.Log("time in propagate part 1 : " + timeInPropagatePart1);
+        Debug.Log("time in propagate part 2 : " + timeInPropagatePart2);
         Debug.Log("Time Log 7 : " + Time.timeSinceLevelLoad);
         yield return basegen.ShowCoroutine(grid, collapsed);
 
@@ -169,6 +178,9 @@ public class Generator : MonoBehaviour
     {
         Vector2Int[] neighbours = GetNeighbours(target);
 
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+
         //merge all possibilities
         HashSet<HexagoneTile>[] adjacencyPossibilities = new HashSet<HexagoneTile>[6]{  new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(),
@@ -176,23 +188,45 @@ public class Generator : MonoBehaviour
                                                                                         new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(),
                                                                                         new HashSet<HexagoneTile>(), };
-
+        sw.Stop();
+        timeInPropagatePart1 += (float)sw.Elapsed.TotalSeconds;
+        sw.Restart();
         //RAJOUTER NE PAS MAJ LES COLLAPSED                                                                                     
-        foreach (var possibility in gridPossibilities[target.x, target.y])
+        foreach (var possibility in gridPossibilities[target.x, target.y]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
         {
-            adjacencyPossibilities[0].UnionWith(possibility.northWest);
+            foreach(var item in possibility.northWest)
+            {
+                adjacencyPossibilities[0].Add(item);
+            }
 
-            adjacencyPossibilities[1].UnionWith(possibility.northEast);
+            foreach (var item in possibility.northEast)
+            {
+                adjacencyPossibilities[1].Add(item);
+            }
+            
+            foreach(var item in possibility.west)
+            {
+                adjacencyPossibilities[2].Add(item);
+            }
 
-            adjacencyPossibilities[2].UnionWith(possibility.west);
+            foreach (var item in possibility.east)
+            {
+                adjacencyPossibilities[3].Add(item);
+            }
 
-            adjacencyPossibilities[3].UnionWith(possibility.east);
+            foreach (var item in possibility.southWest)
+            {
+                adjacencyPossibilities[4].Add(item);
+            }
 
-            adjacencyPossibilities[4].UnionWith(possibility.southWest);
-
-            adjacencyPossibilities[5].UnionWith(possibility.southEast);
+            foreach (var item in possibility.southEast)
+            {
+                adjacencyPossibilities[5].Add(item);
+            }
+            
         }
-
+        sw.Stop();
+        timeInPropagatePart2 += (float)sw.Elapsed.TotalSeconds;
         //update
         List<Vector2Int> nextToPropagate = new List<Vector2Int>();
         for (int i = 0; i < 6; i++)
@@ -201,7 +235,7 @@ public class Generator : MonoBehaviour
             {
                 bool asChanged = false;
                 List<HexagoneTile> updatedPossibilities = new List<HexagoneTile>(gridPossibilities[neighbours[i].x, neighbours[i].y]);
-                
+
                 foreach (var neighbourPossibility in gridPossibilities[neighbours[i].x, neighbours[i].y])
                 {
                     if (!adjacencyPossibilities[i].Contains(neighbourPossibility))
@@ -229,7 +263,9 @@ public class Generator : MonoBehaviour
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
         collapsed.Add(target);
         todo.Remove(target);
+        float t = Time.time;
         yield return Propagate(target);
+        timeInPropagate += Time.time - t;
         if (todo.Count == 0) yield break;
         float min = float.PositiveInfinity;
         Vector2Int realNext = new Vector2Int();
@@ -250,7 +286,9 @@ public class Generator : MonoBehaviour
         HexagoneTile pick = tileToSet;
         if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
+        float t = Time.time;
         yield return Propagate(target);
+        timeInPropagate += Time.time - t;
     }
 
     HexagoneTile RandomPick(List<HexagoneTile> possibilities)
