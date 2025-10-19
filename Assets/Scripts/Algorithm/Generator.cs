@@ -194,7 +194,7 @@ public class Generator : MonoBehaviour
         //RAJOUTER NE PAS MAJ LES COLLAPSED                                                                                     
         foreach (var possibility in gridPossibilities[target.x, target.y]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
         {
-            foreach(var item in possibility.northWest)
+            foreach (var item in possibility.northWest)
             {
                 adjacencyPossibilities[0].Add(item);
             }
@@ -203,8 +203,8 @@ public class Generator : MonoBehaviour
             {
                 adjacencyPossibilities[1].Add(item);
             }
-            
-            foreach(var item in possibility.west)
+
+            foreach (var item in possibility.west)
             {
                 adjacencyPossibilities[2].Add(item);
             }
@@ -223,7 +223,7 @@ public class Generator : MonoBehaviour
             {
                 adjacencyPossibilities[5].Add(item);
             }
-            
+
         }
         sw.Stop();
         timeInPropagatePart2 += (float)sw.Elapsed.TotalSeconds;
@@ -243,17 +243,34 @@ public class Generator : MonoBehaviour
                         updatedPossibilities.Remove(neighbourPossibility);
                         asChanged = true;
                     }
+                    /*if (!IsPossible(neighbourPossibility, target.x, target.y, i))
+                    {
+                        updatedPossibilities.Remove(neighbourPossibility);
+                        asChanged = true;
+                    }*/
                 }
                 gridPossibilities[neighbours[i].x, neighbours[i].y] = updatedPossibilities;
 
                 if (asChanged) nextToPropagate.Add(neighbours[i]); // only propagate if the possibilities have changed
             }
         }
-        
+
         foreach (var next in nextToPropagate)
         {
             yield return Propagate(next);
         }
+    }
+    
+    public bool IsPossible(HexagoneTile poss, int x, int y, int position)
+    {
+        foreach (var tile in gridPossibilities[x, y])
+        {
+            if (tile.AdjacencyPossibilities()[position].Contains(poss))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     IEnumerator Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
