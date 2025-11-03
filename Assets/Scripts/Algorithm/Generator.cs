@@ -74,9 +74,9 @@ public class Generator : MonoBehaviour
         {
             Vector2Int bottom = new Vector2Int(i, 0);
             Vector2Int top = new Vector2Int(i, grid_height - 1);
-            yield return Collapse(bottom, water);
+            Collapse(bottom, water);
             collapsed.Add(bottom);
-            yield return Collapse(top, water);
+            Collapse(top, water);
             collapsed.Add(top);
             if (i % 10 == 0)
             {
@@ -88,9 +88,9 @@ public class Generator : MonoBehaviour
         {
             Vector2Int left = new Vector2Int(0, i);
             Vector2Int right = new Vector2Int(grid_width - 1, i);
-            yield return Collapse(left, water);
+            Collapse(left, water);
             collapsed.Add(left);
-            yield return Collapse(right, water);
+            Collapse(right, water);
             collapsed.Add(right);
             if (i % 10 == 0)
             {
@@ -144,7 +144,7 @@ public class Generator : MonoBehaviour
         Debug.Log("Time Log 5 : " + Time.timeSinceLevelLoad);
 
         //2) go to that tile and do
-        yield return Collapse(new Vector2Int(rx, ry), collapsed, todo);
+        Collapse(new Vector2Int(rx, ry), collapsed, todo);
 
         Debug.Log("Time Log 6 : " + Time.timeSinceLevelLoad);
 
@@ -174,7 +174,7 @@ public class Generator : MonoBehaviour
         basegen.size = new Vector2Int(grid_width, grid_height);
     }
 
-    IEnumerator Propagate(Vector2Int target)
+    void Propagate(Vector2Int target)
     {
         Vector2Int[] neighbours = GetNeighbours(target);
 
@@ -182,49 +182,18 @@ public class Generator : MonoBehaviour
         sw.Start();
 
         //merge all possibilities
-        HashSet<HexagoneTile>[] adjacencyPossibilities = new HashSet<HexagoneTile>[6]{  new HashSet<HexagoneTile>(),
-                                                                                        new HashSet<HexagoneTile>(),
-                                                                                        new HashSet<HexagoneTile>(),
-                                                                                        new HashSet<HexagoneTile>(),
-                                                                                        new HashSet<HexagoneTile>(),
-                                                                                        new HashSet<HexagoneTile>(), };
+        HashSet<HexagoneTile>[] adjacencyPossibilities = new HashSet<HexagoneTile>[6]{  new HashSet<HexagoneTile>(300),
+                                                                                        new HashSet<HexagoneTile>(300),
+                                                                                        new HashSet<HexagoneTile>(300),
+                                                                                        new HashSet<HexagoneTile>(300),
+                                                                                        new HashSet<HexagoneTile>(300),
+                                                                                        new HashSet<HexagoneTile>(300), };
+
         sw.Stop();
         timeInPropagatePart1 += (float)sw.Elapsed.TotalSeconds;
         sw.Restart();
         //RAJOUTER NE PAS MAJ LES COLLAPSED                                                                                     
-        foreach (var possibility in gridPossibilities[target.x, target.y]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
-        {
-            foreach (var item in possibility.northWest)
-            {
-                adjacencyPossibilities[0].Add(item);
-            }
-
-            foreach (var item in possibility.northEast)
-            {
-                adjacencyPossibilities[1].Add(item);
-            }
-
-            foreach (var item in possibility.west)
-            {
-                adjacencyPossibilities[2].Add(item);
-            }
-
-            foreach (var item in possibility.east)
-            {
-                adjacencyPossibilities[3].Add(item);
-            }
-
-            foreach (var item in possibility.southWest)
-            {
-                adjacencyPossibilities[4].Add(item);
-            }
-
-            foreach (var item in possibility.southEast)
-            {
-                adjacencyPossibilities[5].Add(item);
-            }
-
-        }
+        createHaset(adjacencyPossibilities, target);
         sw.Stop();
         timeInPropagatePart2 += (float)sw.Elapsed.TotalSeconds;
         //update
@@ -257,7 +226,43 @@ public class Generator : MonoBehaviour
 
         foreach (var next in nextToPropagate)
         {
-            yield return Propagate(next);
+            Propagate(next);
+        }
+    }
+
+    void createHaset( HashSet<HexagoneTile>[] adjacencyPossibilities, Vector2Int target)
+    {
+        foreach (var possibility in gridPossibilities[target.x, target.y]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
+        {
+            foreach (var item in possibility.northWest)
+            {
+                adjacencyPossibilities[0].Add(item);
+            }
+
+            foreach (var item in possibility.northEast)
+            {
+                adjacencyPossibilities[1].Add(item);
+            }
+
+            foreach (var item in possibility.west)
+            {
+                adjacencyPossibilities[2].Add(item);
+            }
+
+            foreach (var item in possibility.east)
+            {
+                adjacencyPossibilities[3].Add(item);
+            }
+
+            foreach (var item in possibility.southWest)
+            {
+                adjacencyPossibilities[4].Add(item);
+            }
+
+            foreach (var item in possibility.southEast)
+            {
+                adjacencyPossibilities[5].Add(item);
+            }
         }
     }
     
@@ -273,7 +278,7 @@ public class Generator : MonoBehaviour
         return false;
     }
 
-    IEnumerator Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
+    void Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
     {
         HexagoneTile pick = RandomPick(gridPossibilities[target.x, target.y]);
         if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
@@ -281,9 +286,9 @@ public class Generator : MonoBehaviour
         collapsed.Add(target);
         todo.Remove(target);
         float t = Time.time;
-        yield return Propagate(target);
+        Propagate(target);
         timeInPropagate += Time.time - t;
-        if (todo.Count == 0) yield break;
+        if (todo.Count == 0) return;
         float min = float.PositiveInfinity;
         Vector2Int realNext = new Vector2Int();
 
@@ -295,16 +300,16 @@ public class Generator : MonoBehaviour
                 realNext = next;
             }
         }
-        yield return Collapse(realNext, collapsed, todo);
+        Collapse(realNext, collapsed, todo);
     }
 
-    IEnumerator Collapse(Vector2Int target, HexagoneTile tileToSet)
+    void Collapse(Vector2Int target, HexagoneTile tileToSet)
     {
         HexagoneTile pick = tileToSet;
         if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
         gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
         float t = Time.time;
-        yield return Propagate(target);
+        Propagate(target);
         timeInPropagate += Time.time - t;
     }
 
