@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.Collections;
 
 public enum Terrain
 {
@@ -10,6 +11,18 @@ public enum Terrain
 [CreateAssetMenu(menuName = "Procedural Generation/HexagoneTile")]
 public class HexagoneTile : ScriptableObject
 {
+
+
+    public struct HexagoneTileData
+    {
+        public int identifier;
+        public NativeList<int> northWest;
+        public NativeList<int> northEast;
+        public NativeList<int> east;
+        public NativeList<int> southEast;
+        public NativeList<int> southWest;
+        public NativeList<int> west;
+    }
     public GameObject prefab;
     public Terrain[] sequence = new Terrain[6];
     public float occurenceValue;
@@ -51,5 +64,7 @@ public class HexagoneTile : ScriptableObject
         prefab.GetComponent<HexaContainer>().scriptable = this;
         return Instantiate(prefab, pos, Quaternion.Euler(0, rotation * 60, 0), transform);
     }
+
+
     
 }

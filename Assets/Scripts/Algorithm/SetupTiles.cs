@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
+using static HexagoneTile;
 
 public class SetupTiles : MonoBehaviour
 {
@@ -97,10 +99,10 @@ public class SetupTiles : MonoBehaviour
         }
         return rotatedPossibilities;
     }
-    
+
     void MakeTerrainPossibilityLists(List<HexagoneTile> allTiles)
     {
-       
+
         foreach (var terrain in TERRAINS)
         {
             List<HexagoneTile> northWest = new List<HexagoneTile>();
@@ -169,13 +171,58 @@ public class SetupTiles : MonoBehaviour
 
             }
 
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             foreach (var tile in allHexagoneTiles)
             {
                 EditorUtility.SetDirty(tile);
                 AssetDatabase.SaveAssets();
             }
-            #endif
+#endif
         }
+    }
+    
+    private HexagoneTileData ToThreadSafe(HexagoneTile tile)
+    {
+        HexagoneTileData tileData = new HexagoneTileData();
+        tileData.identifier = allHexagoneTiles.IndexOf(tile);
+
+        tileData.northWest = new NativeList<int>();
+        tileData.northEast = new NativeList<int>();
+        tileData.east = new NativeList<int>();
+        tileData.southEast = new NativeList<int>();
+        tileData.southWest = new NativeList<int>();
+        tileData.west = new NativeList<int>();
+
+        foreach (var item in tile.northWest)
+        {
+            tileData.northWest.Add(allHexagoneTiles.IndexOf(item));
+        }
+
+        foreach (var item in tile.northEast)
+        {
+            tileData.northEast.Add(allHexagoneTiles.IndexOf(item));
+        }
+
+        foreach (var item in tile.east)
+        {
+            tileData.east.Add(allHexagoneTiles.IndexOf(item));
+        }
+
+        foreach (var item in tile.southEast)
+        {
+            tileData.southEast.Add(allHexagoneTiles.IndexOf(item));
+        }
+
+        foreach (var item in tile.southWest)
+        {
+            tileData.southWest.Add(allHexagoneTiles.IndexOf(item));
+        }
+
+        foreach (var item in tile.west)
+        {
+            tileData.west.Add(allHexagoneTiles.IndexOf(item));
+        }
+
+        return tileData;
     }
 }
