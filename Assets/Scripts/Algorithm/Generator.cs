@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
@@ -25,7 +26,8 @@ public class Generator : MonoBehaviour
             : base(message, inner) { }
     }
 
-    NativeList<HexagoneTileData>[,] gridPossibilities;
+    NativeArray<NativeList<HexagoneTileData>> gridPossibilities;
+    NativeList<Vector2Int> collapsed;
     HexagoneTileData[,] grid;
     HexagoneTileData[,] gridBeforeSolving;
     public int grid_width = 2;
@@ -42,8 +44,8 @@ public class Generator : MonoBehaviour
     [Range(0, 100)] public float forestProbability;
     [Range(0, 100)] public float strangeProbability;
 
-
-
+    JobHandle handle;
+    bool running;
 
 
     void Start()
@@ -52,21 +54,35 @@ public class Generator : MonoBehaviour
         Generate();
     }
 
+    void Update()
+    {
+        if(running && handle.IsCompleted)
+        {
+            handle.Complete();
+            running = false;
+            OnComplete();
+        }
+    }
+
     void Init()
     {
         Debug.Assert(setup.allHexagoneTiles != null && setup.allHexagoneTiles.Count != 0, "possibilities must be entered");
         grid = new HexagoneTileData[grid_width, grid_height];
         gridBeforeSolving = new HexagoneTileData[grid_width, grid_height];
-        gridPossibilities = new NativeList<HexagoneTileData>[grid_width, grid_height];
+        gridPossibilities = new NativeArray<NativeList<HexagoneTileData>>(grid_width*grid_height, Allocator.Persistent);
+        collapsed = new NativeList<Vector2Int>(Allocator.Persistent);
 
-        for (int i = 0; i < gridPossibilities.GetLength(0); i++)
+        NativeList<HexagoneTileData> gridPossibilities_setup = setup.GetAllHexagoneTiles();
+        for (int i = 0; i < grid_width; i++)
         {
-            for (int j = 0; j < gridPossibilities.GetLength(1); j++)
+            for (int j = 0; j < grid_height; j++)
             {
-                gridPossibilities[i, j] = new NativeList<HexagoneTileData>();
-                gridPossibilities[i,j].AddRange(setup.GetAllHexagoneTiles().AsArray());
+                gridPossibilities[index1D(i,j,grid_width)] = new NativeList<HexagoneTileData>(Allocator.Persistent);
+                gridPossibilities[index1D(i,j,grid_width)].AddRange(gridPossibilities_setup.AsArray());
             }
         }
+
+        gridPossibilities_setup.Dispose();
         ChangeOccurenceValues();
         InitBase();        
         GenerateNewSeed();
@@ -85,20 +101,44 @@ public class Generator : MonoBehaviour
     {
         Init();
 
+        GenerateJob job = new GenerateJob
+        {
+            gridPossibilities = gridPossibilities,
+            collapsed = collapsed,
+            water = setup.ToThreadSafe(setup.water[0]),
+            grid_width = grid_width,
+            grid_height = grid_height
+        };
+
+        handle = job.Schedule();
+        running = true;
+    }
+
+    void OnComplete()
+    {
         for (int i = 0; i < grid_width; i++)
         {
             for (int j = 0; j < grid_height; j++)
             {
-                Debug.Assert(gridPossibilities[i, j].Length == 1, "WFC has failed");
-                grid[i, j] = gridPossibilities[i, j][0];
+                Debug.Assert(gridPossibilities[index1D(i,j,grid_width)].Length == 1, "WFC has failed");
+                grid[i, j] = gridPossibilities[index1D(i,j,grid_width)][0];
+                gridPossibilities[index1D(i,j,grid_width)].Dispose();
+
             }
         }
-        StartCoroutine(basegen.ShowCoroutine(grid, collapsed));
+        HexagoneTile[,] grid_tiles = new HexagoneTile[grid_width,grid_height];
+        for (int i = 0; i < grid_width; i++)
+        {
+            for (int j = 0; j < grid_height; j++)
+            {
+                grid_tiles[i,j] = setup.allHexagoneTiles[grid[i,j].identifier];
+                grid[i,j].Free();
+            }
+        }
 
-
-
+        StartCoroutine(basegen.ShowCoroutine(grid_tiles, new List<Vector2Int>(collapsed)));
+        collapsed.Dispose();
     }
-
 
     void ChangeOccurenceValues()
     {
@@ -121,22 +161,28 @@ public class Generator : MonoBehaviour
         UnityEngine.Random.InitState(seed);
     }
 
-    public class GenerateJob : IJob
+    static int index1D(int x, int y, int grid_width)
+    {
+        return y*grid_width +x;
+    }
+
+    public struct GenerateJob : IJob
     {
 
-        readonly NativeList<HexagoneTileData>[,] gridPossibilities;
-        readonly HexagoneTile water;
-        readonly int grid_width;
-        readonly int grid_height;
+        public NativeArray<NativeList<HexagoneTileData>> gridPossibilities;
+        public NativeList<Vector2Int> collapsed;
+        public HexagoneTileData water;
+        public int grid_width;
+        public int grid_height;
         public void Execute()
         {
-            throw new NotImplementedException();
+            Generate();
         }
+
+
 
         void Generate()
         {
-
-            List<Vector2Int> collapsed = new List<Vector2Int>();
             InitWater(collapsed);
 
 
@@ -144,7 +190,7 @@ public class Generator : MonoBehaviour
             int rx = UnityEngine.Random.Range(1, grid_width - 1);// 1 et -1 pour l'eau
             int ry = UnityEngine.Random.Range(1, grid_height - 1);//1 et -1 pour l'eau
 
-            List<Vector2Int> todo = new List<Vector2Int>();
+            NativeList<Vector2Int> todo = new NativeList<Vector2Int>(Allocator.Persistent);
             for (int i = 1; i < grid_width - 1; i++)
             {
                 for (int j = 1; j < grid_height - 1; j++)
@@ -156,10 +202,10 @@ public class Generator : MonoBehaviour
 
             //2) go to that tile and do
             Collapse(new Vector2Int(rx, ry), collapsed, todo);
-
+            todo.Dispose();
         }
 
-        void InitWater(List<Vector2Int> collapsed)
+        void InitWater(NativeList<Vector2Int> collapsed)
         {
             for (int i = 0; i < grid_width; i++)
             {
@@ -184,15 +230,15 @@ public class Generator : MonoBehaviour
         
          void Propagate(Vector2Int target)
         {
-            Vector2Int[] neighbours = GetNeighbours(target);
+            NativeArray<Vector2Int> neighbours = GetNeighbours(target);
 
             //merge all possibilities
-            NativeHashMap<int, bool>[] adjacencyPossibilities = new NativeHashMap<int, bool>[6]{  new NativeHashMap<int, bool>(),
-                                                                                            new NativeHashMap<int, bool>(),
-                                                                                            new NativeHashMap<int, bool>(),
-                                                                                            new NativeHashMap<int, bool>(),
-                                                                                            new NativeHashMap<int, bool>(),
-                                                                                            new NativeHashMap<int, bool>(), };
+            NativeHashMap<int, bool>[] adjacencyPossibilities = new NativeHashMap<int, bool>[6]{  new NativeHashMap<int, bool>(300, Allocator.Temp),
+                                                                                            new NativeHashMap<int, bool>(300, Allocator.Temp),
+                                                                                            new NativeHashMap<int, bool>(300, Allocator.Temp),
+                                                                                            new NativeHashMap<int, bool>(300, Allocator.Temp),
+                                                                                            new NativeHashMap<int, bool>(300, Allocator.Temp),
+                                                                                            new NativeHashMap<int, bool>(300, Allocator.Temp), };
 
             //RAJOUTER NE PAS MAJ LES COLLAPSED                                                                                     
             createHashMap(ref adjacencyPossibilities, target);
@@ -203,21 +249,26 @@ public class Generator : MonoBehaviour
                 if (!(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
                 {
                     bool asChanged = false;
-                    NativeList<HexagoneTileData> updatedPossibilities = new NativeList<HexagoneTileData>();
-                    updatedPossibilities.AddRange(gridPossibilities[neighbours[i].x, neighbours[i].y].AsArray());
+                    NativeList<HexagoneTileData> updatedPossibilities = new NativeList<HexagoneTileData>(Allocator.Temp);
+                    updatedPossibilities.AddRange(gridPossibilities[index1D(neighbours[i].x, neighbours[i].y, grid_width)].AsArray());
 
-                    foreach (var neighbourPossibility in gridPossibilities[neighbours[i].x, neighbours[i].y])
+                    foreach (var neighbourPossibility in gridPossibilities[index1D(neighbours[i].x, neighbours[i].y, grid_width)])
                     {
                         if (!adjacencyPossibilities[i].ContainsKey(neighbourPossibility.identifier))
                         {
-                            RemoveFromNativeList(ref updatedPossibilities, neighbourPossibility);
+                            updatedPossibilities = RemoveDataFromNativeList(updatedPossibilities, neighbourPossibility);
                             asChanged = true;
                         }
                     }
-                    gridPossibilities[neighbours[i].x, neighbours[i].y] = updatedPossibilities;
+                    gridPossibilities[index1D(neighbours[i].x, neighbours[i].y, grid_width)].Dispose();
+                    gridPossibilities[index1D(neighbours[i].x, neighbours[i].y, grid_width)] = updatedPossibilities;
 
                     if (asChanged) nextToPropagate.Add(neighbours[i]); // only propagate if the possibilities have changed
                 }
+            }
+            foreach (var item in adjacencyPossibilities)
+            {
+                item.Dispose();
             }
 
             foreach (var next in nextToPropagate)
@@ -226,7 +277,7 @@ public class Generator : MonoBehaviour
             }
         }
 
-        private void RemoveFromNativeList(ref NativeList<HexagoneTileData> updatedPossibilities, HexagoneTileData neighbourPossibility)
+        private NativeList<HexagoneTileData> RemoveDataFromNativeList( NativeList<HexagoneTileData> updatedPossibilities, HexagoneTileData neighbourPossibility)
         {
             for (int i =0; i<updatedPossibilities.Length; i++ )
             {
@@ -236,12 +287,27 @@ public class Generator : MonoBehaviour
                     break;
                 } 
             }
+            return updatedPossibilities;
         }
+
+        private NativeList<Vector2Int> RemoveFromNativeList(NativeList<Vector2Int> list, Vector2Int obj)
+        {
+            for (int i =0; i<list.Length; i++ )
+            {
+                if (list[i]== obj)
+                {
+                    list.RemoveAt(i);
+                    break;
+                } 
+            }
+            return list;
+        }
+
 
 
         void createHashMap(ref NativeHashMap<int, bool>[] adjacencyPossibilities, Vector2Int target)
         {
-            foreach (var possibility in gridPossibilities[target.x, target.y]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
+            foreach (var possibility in gridPossibilities[index1D(target.x, target.y, grid_width)]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
             {
                 foreach (var item in possibility.northWest)
                 {
@@ -277,70 +343,80 @@ public class Generator : MonoBehaviour
         
 
 
-        void Collapse(Vector2Int target, List<Vector2Int> collapsed, List<Vector2Int> todo)
+        void Collapse(Vector2Int target, NativeList<Vector2Int> collapsed, NativeList<Vector2Int> todo)
         {
-            HexagoneTile pick = RandomPick(gridPossibilities[target.x, target.y]);
-            if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
-            gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
+            HexagoneTileData pick = RandomPick(gridPossibilities[index1D(target.x, target.y, grid_width)]);
+            gridPossibilities[index1D(target.x, target.y, grid_width)].Dispose();
+            gridPossibilities[index1D(target.x, target.y, grid_width)] = new NativeList<HexagoneTileData>(Allocator.Temp) { pick };
             collapsed.Add(target);
-            todo.Remove(target);
+            todo = RemoveFromNativeList(todo, target);
             Propagate(target);
-            if (todo.Count == 0) return;
+            if (todo.Length == 0) return;
             float min = float.PositiveInfinity;
             Vector2Int realNext = new Vector2Int();
 
             foreach (var next in todo)
             {
-                if (gridPossibilities[next.x, next.y].Count < min)
+                if (gridPossibilities[index1D(next.x, next.y, grid_width)].Length < min)
                 {
-                    min = gridPossibilities[next.x, next.y].Count;
+                    min = gridPossibilities[index1D(next.x, next.y,grid_width)].Length;
                     realNext = next;
                 }
             }
             Collapse(realNext, collapsed, todo);
         }
 
-        void Collapse(Vector2Int target, HexagoneTile tileToSet)
+        void Collapse(Vector2Int target, HexagoneTileData tileToSet)
         {
-            HexagoneTile pick = tileToSet;
-            if (pick == null) throw new WFCError($"find a tile with 0 possibilities : {target}");
-            gridPossibilities[target.x, target.y] = new List<HexagoneTile> { pick };
+            HexagoneTileData pick = tileToSet;
+            gridPossibilities[index1D(target.x, target.y, grid_width)].Dispose();
+            gridPossibilities[index1D(target.x, target.y, grid_width)] = new NativeList<HexagoneTileData> { pick };
             Propagate(target);
         }
 
-        HexagoneTile RandomPick(List<HexagoneTile> possibilities)
+        HexagoneTileData RandomPick(NativeList<HexagoneTileData> possibilities)
         {
             float entropy = 0;
             foreach (var possibility in possibilities)
             {
-                entropy += possibility.occurenceValue;
+                entropy += possibility.occurence;
             }
 
             float sum = 0;
             float r = UnityEngine.Random.Range(0, entropy);
             foreach (var possibility in possibilities)
             {
-                sum += possibility.occurenceValue;
+                sum += possibility.occurence;
                 if (r <= sum) return possibility;
             }
-            return null;
+            throw new WFCError($"find a tile with 0 possibilities");
         }
 
-        Vector2Int[] GetNeighbours(Vector2Int v)
+        NativeArray<Vector2Int> GetNeighbours(Vector2Int v)
         {
             int y = v.y;
             int x = v.x;
             if (y % 2 != 0)
             {
-                return new Vector2Int[] {  new Vector2Int(x, y + 1), new Vector2Int(x + 1, y + 1),
-                                        new Vector2Int(x - 1, y), new Vector2Int(x + 1, y),
-                                        new Vector2Int(x, y - 1), new Vector2Int(x + 1, y - 1) };
+                NativeArray<Vector2Int> res =  new NativeArray<Vector2Int>(6,Allocator.Persistent);
+                res[0] = new Vector2Int(x, y + 1);
+                res[1] = new Vector2Int(x + 1, y + 1);
+                res[2] = new Vector2Int(x - 1, y);
+                res[3] = new Vector2Int(x + 1, y);
+                res[4] = new Vector2Int(x, y - 1);
+                res[5] = new Vector2Int(x + 1, y - 1);
+                return res;
             }
             else
             {
-                return new Vector2Int[] {  new Vector2Int(x - 1, y + 1), new Vector2Int(x, y + 1),
-                                        new Vector2Int(x - 1, y), new Vector2Int(x + 1, y),
-                                        new Vector2Int(x - 1, y - 1), new Vector2Int(x, y - 1) };
+                NativeArray<Vector2Int> res =  new NativeArray<Vector2Int>(6,Allocator.Persistent);
+                res[0] = new Vector2Int(x - 1, y + 1);
+                res[1] = new Vector2Int(x, y + 1);
+                res[2] = new Vector2Int(x - 1, y);
+                res[3] = new Vector2Int(x + 1, y);
+                res[4] =  new Vector2Int(x - 1, y - 1);
+                res[5] = new Vector2Int(x, y - 1);
+                return res;
             }
 
         }

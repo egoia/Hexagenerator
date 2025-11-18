@@ -16,12 +16,23 @@ public class HexagoneTile : ScriptableObject
     public struct HexagoneTileData
     {
         public int identifier;
+        public float occurence;
         public NativeList<int> northWest;
         public NativeList<int> northEast;
         public NativeList<int> east;
         public NativeList<int> southEast;
         public NativeList<int> southWest;
         public NativeList<int> west;
+
+        public void Free()
+        {
+            northWest.Dispose();
+            northEast.Dispose();
+            east.Dispose();
+            west.Dispose();
+            southEast.Dispose();
+            southWest.Dispose();
+        }
     }
     public GameObject prefab;
     public Terrain[] sequence = new Terrain[6];

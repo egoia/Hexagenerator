@@ -181,17 +181,18 @@ public class SetupTiles : MonoBehaviour
         }
     }
     
-    private HexagoneTileData ToThreadSafe(HexagoneTile tile)
+    public HexagoneTileData ToThreadSafe(HexagoneTile tile)
     {
         HexagoneTileData tileData = new HexagoneTileData();
         tileData.identifier = allHexagoneTiles.IndexOf(tile);
+        tileData.occurence = tile.occurenceValue;
 
-        tileData.northWest = new NativeList<int>();
-        tileData.northEast = new NativeList<int>();
-        tileData.east = new NativeList<int>();
-        tileData.southEast = new NativeList<int>();
-        tileData.southWest = new NativeList<int>();
-        tileData.west = new NativeList<int>();
+        tileData.northWest = new NativeList<int>(Allocator.Persistent);
+        tileData.northEast = new NativeList<int>(Allocator.Persistent);
+        tileData.east = new NativeList<int>(Allocator.Persistent);
+        tileData.southEast = new NativeList<int>(Allocator.Persistent);
+        tileData.southWest = new NativeList<int>(Allocator.Persistent);
+        tileData.west = new NativeList<int>(Allocator.Persistent);
 
         foreach (var item in tile.northWest)
         {
@@ -228,11 +229,13 @@ public class SetupTiles : MonoBehaviour
 
     public NativeList<HexagoneTileData> GetAllHexagoneTiles()
     {
-        NativeList<HexagoneTileData> tiles = new NativeList<HexagoneTileData>();
+        NativeList<HexagoneTileData> tiles = new NativeList<HexagoneTileData>(Allocator.Persistent);
         foreach(var item in allHexagoneTiles)
         {
             tiles.Add(ToThreadSafe(item));
         }
         return tiles;
     }
+
+    
 }
