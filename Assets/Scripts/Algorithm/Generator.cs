@@ -8,6 +8,7 @@ using Unity.Jobs;
 using Unity.VisualScripting;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using static HexagoneTile;
 using Debug = UnityEngine.Debug;
 
 public class Generator : MonoBehaviour
@@ -24,9 +25,9 @@ public class Generator : MonoBehaviour
             : base(message, inner) { }
     }
 
-    List<HexagoneTile>[,] gridPossibilities;
-    HexagoneTile[,] grid;
-    HexagoneTile[,] gridBeforeSolving;
+    NativeList<HexagoneTileData>[,] gridPossibilities;
+    HexagoneTileData[,] grid;
+    HexagoneTileData[,] gridBeforeSolving;
     public int grid_width = 2;
     public int grid_height = 2;
     public int seed;
@@ -54,15 +55,16 @@ public class Generator : MonoBehaviour
     void Init()
     {
         Debug.Assert(setup.allHexagoneTiles != null && setup.allHexagoneTiles.Count != 0, "possibilities must be entered");
-        grid = new HexagoneTile[grid_width, grid_height];
-        gridBeforeSolving = new HexagoneTile[grid_width, grid_height];
-        gridPossibilities = new List<HexagoneTile>[grid_width, grid_height];
+        grid = new HexagoneTileData[grid_width, grid_height];
+        gridBeforeSolving = new HexagoneTileData[grid_width, grid_height];
+        gridPossibilities = new NativeList<HexagoneTileData>[grid_width, grid_height];
 
         for (int i = 0; i < gridPossibilities.GetLength(0); i++)
         {
             for (int j = 0; j < gridPossibilities.GetLength(1); j++)
             {
-                gridPossibilities[i, j] = new List<HexagoneTile>(setup.allHexagoneTiles);
+                gridPossibilities[i, j] = new NativeList<HexagoneTileData>();
+                gridPossibilities[i,j].AddRange(setup.GetAllHexagoneTiles().AsArray());
             }
         }
         ChangeOccurenceValues();
@@ -75,7 +77,7 @@ public class Generator : MonoBehaviour
     void Solve()
     {
         InitSeed();
-        gridBeforeSolving = (HexagoneTile[,])grid.Clone();
+        gridBeforeSolving = (HexagoneTileData[,])grid.Clone();
     }
 
     [ContextMenu("Generate")]   
@@ -87,7 +89,7 @@ public class Generator : MonoBehaviour
         {
             for (int j = 0; j < grid_height; j++)
             {
-                Debug.Assert(gridPossibilities[i, j].Count == 1, "WFC has failed");
+                Debug.Assert(gridPossibilities[i, j].Length == 1, "WFC has failed");
                 grid[i, j] = gridPossibilities[i, j][0];
             }
         }
@@ -122,7 +124,7 @@ public class Generator : MonoBehaviour
     public class GenerateJob : IJob
     {
 
-        readonly NativeList<HexagoneTile>[,] gridPossibilities;
+        readonly NativeList<HexagoneTileData>[,] gridPossibilities;
         readonly HexagoneTile water;
         readonly int grid_width;
         readonly int grid_height;
@@ -185,29 +187,30 @@ public class Generator : MonoBehaviour
             Vector2Int[] neighbours = GetNeighbours(target);
 
             //merge all possibilities
-            HashSet<HexagoneTile>[] adjacencyPossibilities = new HashSet<HexagoneTile>[6]{  new HashSet<HexagoneTile>(300),
-                                                                                            new HashSet<HexagoneTile>(300),
-                                                                                            new HashSet<HexagoneTile>(300),
-                                                                                            new HashSet<HexagoneTile>(300),
-                                                                                            new HashSet<HexagoneTile>(300),
-                                                                                            new HashSet<HexagoneTile>(300), };
+            NativeHashMap<int, bool>[] adjacencyPossibilities = new NativeHashMap<int, bool>[6]{  new NativeHashMap<int, bool>(),
+                                                                                            new NativeHashMap<int, bool>(),
+                                                                                            new NativeHashMap<int, bool>(),
+                                                                                            new NativeHashMap<int, bool>(),
+                                                                                            new NativeHashMap<int, bool>(),
+                                                                                            new NativeHashMap<int, bool>(), };
 
             //RAJOUTER NE PAS MAJ LES COLLAPSED                                                                                     
-            createHashet(adjacencyPossibilities, target);
+            createHashMap(ref adjacencyPossibilities, target);
             //update
-            List<Vector2Int> nextToPropagate = new List<Vector2Int>();
+            NativeList<Vector2Int> nextToPropagate = new NativeList<Vector2Int>();
             for (int i = 0; i < 6; i++)
             {
                 if (!(neighbours[i].x >= grid_width || neighbours[i].y >= grid_height || neighbours[i].x < 0 || neighbours[i].y < 0))// si pas en dehors de la grid
                 {
                     bool asChanged = false;
-                    List<HexagoneTile> updatedPossibilities = new List<HexagoneTile>(gridPossibilities[neighbours[i].x, neighbours[i].y]);
+                    NativeList<HexagoneTileData> updatedPossibilities = new NativeList<HexagoneTileData>();
+                    updatedPossibilities.AddRange(gridPossibilities[neighbours[i].x, neighbours[i].y].AsArray());
 
                     foreach (var neighbourPossibility in gridPossibilities[neighbours[i].x, neighbours[i].y])
                     {
-                        if (!adjacencyPossibilities[i].Contains(neighbourPossibility))
+                        if (!adjacencyPossibilities[i].ContainsKey(neighbourPossibility.identifier))
                         {
-                            updatedPossibilities.Remove(neighbourPossibility);
+                            RemoveFromNativeList(ref updatedPossibilities, neighbourPossibility);
                             asChanged = true;
                         }
                     }
@@ -223,38 +226,51 @@ public class Generator : MonoBehaviour
             }
         }
 
-        void createHashet( HashSet<HexagoneTile>[] adjacencyPossibilities, Vector2Int target)
+        private void RemoveFromNativeList(ref NativeList<HexagoneTileData> updatedPossibilities, HexagoneTileData neighbourPossibility)
+        {
+            for (int i =0; i<updatedPossibilities.Length; i++ )
+            {
+                if (updatedPossibilities[i].identifier == neighbourPossibility.identifier)
+                {
+                    updatedPossibilities.RemoveAt(i);
+                    break;
+                } 
+            }
+        }
+
+
+        void createHashMap(ref NativeHashMap<int, bool>[] adjacencyPossibilities, Vector2Int target)
         {
             foreach (var possibility in gridPossibilities[target.x, target.y]) //TODO creer type de données qui stock ca des le dsebut pour pas avoir a faire ca du tt juste une fois au debut 
             {
                 foreach (var item in possibility.northWest)
                 {
-                    adjacencyPossibilities[0].Add(item);
+                    adjacencyPossibilities[0].Add(item, true);
                 }
 
                 foreach (var item in possibility.northEast)
                 {
-                    adjacencyPossibilities[1].Add(item);
+                    adjacencyPossibilities[1].Add(item, true);
                 }
 
                 foreach (var item in possibility.west)
                 {
-                    adjacencyPossibilities[2].Add(item);
+                    adjacencyPossibilities[2].Add(item, true);
                 }
 
                 foreach (var item in possibility.east)
                 {
-                    adjacencyPossibilities[3].Add(item);
+                    adjacencyPossibilities[3].Add(item, true);
                 }
 
                 foreach (var item in possibility.southWest)
                 {
-                    adjacencyPossibilities[4].Add(item);
+                    adjacencyPossibilities[4].Add(item, true);
                 }
 
                 foreach (var item in possibility.southEast)
                 {
-                    adjacencyPossibilities[5].Add(item);
+                    adjacencyPossibilities[5].Add(item, true);
                 }
             }
         }

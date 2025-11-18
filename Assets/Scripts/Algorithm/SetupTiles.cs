@@ -225,4 +225,14 @@ public class SetupTiles : MonoBehaviour
 
         return tileData;
     }
+
+    public NativeList<HexagoneTileData> GetAllHexagoneTiles()
+    {
+        NativeList<HexagoneTileData> tiles = new NativeList<HexagoneTileData>();
+        foreach(var item in allHexagoneTiles)
+        {
+            tiles.Add(ToThreadSafe(item));
+        }
+        return tiles;
+    }
 }
