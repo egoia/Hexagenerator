@@ -43,12 +43,27 @@ public class Generator : MonoBehaviour
 
 
 
+    bool jobRunning = false;
+    JobHandle jobHandle;
+
+    List<Vector2Int> collapsed;
 
 
     void Start()
     {
         basegen.size = new Vector2Int(grid_width, grid_height);
         Generate();
+    }
+
+    void Update()
+    {
+        if(jobRunning && jobHandle.IsCompleted)
+        {
+            jobRunning = false;
+            jobHandle.Complete();
+
+            OnComplete();
+        }
     }
 
     void Init()
@@ -83,6 +98,22 @@ public class Generator : MonoBehaviour
     {
         Init();
 
+        GenerateJob job = new GenerateJob
+        {
+            gridPossibilities = this.gridPossibilities,
+            collapsed = this.collapsed,
+            water = setup.water[0],
+            grid_width = this.grid_width,
+            grid_height = this.grid_height
+        };
+
+        jobHandle = job.Schedule();
+        jobRunning = true;
+
+    }
+
+    void OnComplete()
+    {
         for (int i = 0; i < grid_width; i++)
         {
             for (int j = 0; j < grid_height; j++)
@@ -92,9 +123,6 @@ public class Generator : MonoBehaviour
             }
         }
         StartCoroutine(basegen.ShowCoroutine(grid, collapsed));
-
-
-
     }
 
 
@@ -119,22 +147,23 @@ public class Generator : MonoBehaviour
         UnityEngine.Random.InitState(seed);
     }
 
-    public class GenerateJob : IJob
+    public struct GenerateJob : IJob
     {
 
-        readonly NativeList<HexagoneTile>[,] gridPossibilities;
-        readonly HexagoneTile water;
-        readonly int grid_width;
-        readonly int grid_height;
+        public List<HexagoneTile>[,] gridPossibilities;
+        public List<Vector2Int> collapsed;
+        public HexagoneTile water;
+        public int grid_width;
+        public int grid_height;
         public void Execute()
         {
-            throw new NotImplementedException();
+            Generate();
         }
 
         void Generate()
         {
 
-            List<Vector2Int> collapsed = new List<Vector2Int>();
+            collapsed = new List<Vector2Int>();
             InitWater(collapsed);
 
 
