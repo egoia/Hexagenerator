@@ -138,6 +138,7 @@ public class Generator : MonoBehaviour
 
         StartCoroutine(basegen.ShowCoroutine(grid_tiles, new List<Vector2Int>(collapsed)));
         collapsed.Dispose();
+        gridPossibilities.Dispose();
     }
 
     void ChangeOccurenceValues()
